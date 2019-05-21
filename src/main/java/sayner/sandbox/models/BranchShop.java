@@ -1,37 +1,47 @@
 package sayner.sandbox.models;
 
+import javax.persistence.*;
+
 /**
  * Класс представляет собой филиал магазина
  * В базе соответствующая таблица называется
  * Branch_shops
- *
+ * <p>
  * #1
  */
+@Entity
+@Table(name = "Branch_shops")
 public class BranchShop {
 
     /**
      * Индентификатор БД
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /**
      * Регион или область страны
      */
+    @Column
     private String region;
 
     /**
      * Город магазина
      */
+    @Column
     private String city;
 
     /**
      * Улицы магазина
      */
+    @Column
     private String street;
 
     /**
      * Название данного, конкретного магазина, чтобы их можно было различить
      */
+    @Column
     private String name;
 
 
@@ -39,7 +49,6 @@ public class BranchShop {
      * getter'ы & setter'ы
      */
     // Сначала getter'ы
-
     public int getId() {
         return id;
     }

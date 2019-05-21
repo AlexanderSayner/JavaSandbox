@@ -20,25 +20,19 @@ public class ArticleService {
     @Autowired
     public ArticleRepository articleRepository;
 
-    /**
-     * Каталог товаров
-     * new ArrayList<> обеспечивает возможность добавления в него новых элементоа
-     */
-    private List<Article> articles = new ArrayList<>(Arrays.asList(
-            new Article(1, "Хлеб", "Пекарня", "Белый", 0.200, "none"),
-            new Article(2, "Кефир", "Заволжский", "15%", 0.500, "none"),
-            new Article(3, "Печенье", "Пекарь", "Развесное", 0.10, "none")
-    ));
-
+    //
+    // logic methods
+    //
 
     /**
-     * getter'ы & setter'ы
+     * Забрать весь список из базы
+     *
+     * @return
      */
-
     public List<Article> getAllArticles() {
 
         // сюда потом начнут складываться объекты из базы
-        List<Article> articles=new ArrayList<>();
+        List<Article> articles = new ArrayList<>();
         // автоматически находит данные в таблице
         articleRepository.findAll()
                 .forEach(articles::add);
@@ -46,9 +40,6 @@ public class ArticleService {
         return articles;
     }
 
-    //
-    // logic methods
-    //
 
     /**
      * Получить все позиции из сиписка
