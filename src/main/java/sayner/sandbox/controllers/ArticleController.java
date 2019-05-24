@@ -1,16 +1,22 @@
 package sayner.sandbox.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sayner.sandbox.jsonpattern.ResponseHandler;
+import sayner.sandbox.jsonpattern.jviews.ArticleView;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.services.ArticleService;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * Управление каталогом
  */
 @RestController
+@RequestMapping("/articles")
 public class ArticleController {
 
     @Autowired
@@ -21,9 +27,13 @@ public class ArticleController {
      *
      * @return
      */
-    @RequestMapping("/articles")
-    public List<Article> getAllArticles() {
-        return articleService.getAllArticles();
+    @GetMapping
+    public ResponseEntity<Object> getAllArticlesTest() {
+
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+                articleService.getAllArticles());
     }
 
     /**
@@ -33,17 +43,22 @@ public class ArticleController {
      * @param id
      * @return
      */
-    @RequestMapping("/articles/{id}")
-    public Article getArticle(@PathVariable int id) {
-        return articleService.getAnArticle(id);
+    @GetMapping(value = "/{id}")
+    @JsonView(ArticleView.IdTitleDate.class)
+    public ResponseEntity<Object> getArticle(@PathVariable int id) {
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+                articleService.getAnArticle(id));
     }
 
     /**
      * Выполнится при вызове метода POST на URL /articles
      * В POST Request отправляется объект классса Article
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/articles")
+    @PostMapping
     public void addArticle(@RequestBody Article article) {
+        article.setCreationDateTime(LocalDateTime.now());
         articleService.addArticle(article);
     }
 
@@ -53,17 +68,18 @@ public class ArticleController {
      *
      * @param article
      */
-    @RequestMapping(method = RequestMethod.PUT, value = "/articles")
+    @PutMapping
     public void updateArticle(@RequestBody Article article) {
         articleService.updateArticle(article);
     }
 
     /**
      * Удаляет по ай-дишнику
+     *
      * @param id
      */
-    @RequestMapping(method = RequestMethod.DELETE,value = "/articles/{id}")
-    public void deleteArticle(@PathVariable int id){
+    @DeleteMapping(value = "/{id}")
+    public void deleteArticle(@PathVariable int id) {
         articleService.deleteArticle(id);
     }
 }

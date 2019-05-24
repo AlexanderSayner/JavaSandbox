@@ -124,4 +124,19 @@ public class BranchShop {
         this.name = name;
     }
 
+    /**
+     * Устанавливает вообще всё. Очень нужен был
+     * @param id
+     * @param region
+     * @param city
+     * @param street
+     * @param name
+     */
+    public BranchShop(int id, String region, String city, String street, String name) {
+        this.id = id;
+        this.region = region;
+        this.city = city;
+        this.street = street;
+        this.name = name;
+    }
 }

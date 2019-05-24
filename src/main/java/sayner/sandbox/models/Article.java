@@ -1,6 +1,11 @@
 package sayner.sandbox.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
+import sayner.sandbox.jsonpattern.jviews.ArticleView;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Класс представляет собой каталог
@@ -18,37 +23,48 @@ public class Article {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(ArticleView.Id.class)
     private int id;
 
     /**
      * Наименование товара
      */
     @Column
+    @JsonView(ArticleView.IdTitle.class)
     private String title;
 
     /**
      * Производитель
      */
     @Column
+    @JsonView({ArticleView.IdTitleManufacturer.class, ArticleView.Id.class})
     private String manufacturer;
 
     /**
      * Имя, данное производителем изделия
      */
     @Column
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
     private String name;
 
     /**
      * Масса в СИ
      */
     @Column
+    @JsonView(ArticleView.FullArticle.class)
     private double mass_si;
 
     /**
      * Гарантия
      */
     @Column
+    @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
     private String garantee;
+
+    @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
+    @JsonView(ArticleView.IdTitleDate.class)
+    private LocalDateTime creationDateTime;
 
 
     /**
@@ -57,6 +73,10 @@ public class Article {
     // Сначала getter'ы
     public int getId() {
         return id;
+    }
+
+    public String getStringId(){
+        return String.valueOf(getId());
     }
 
     public String getTitle() {
@@ -77,6 +97,10 @@ public class Article {
 
     public String getGarantee() {
         return garantee;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
     }
 
     // Теперь setter'ы
@@ -101,6 +125,9 @@ public class Article {
         this.garantee = garantee;
     }
 
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
 
     /**
      * Default конструктор
@@ -142,6 +169,7 @@ public class Article {
 
     /**
      * Устанавливает вообще всё. Очень нужен был
+     *
      * @param id
      * @param title
      * @param manufacturer

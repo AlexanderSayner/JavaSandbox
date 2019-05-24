@@ -2,12 +2,14 @@ package sayner.sandbox.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 
 @Service
@@ -33,9 +35,14 @@ public class ArticleService {
 
         // сюда потом начнут складываться объекты из базы
         List<Article> articles = new ArrayList<>();
-        // автоматически находит данные в таблице
-        articleRepository.findAll()
-                .forEach(articles::add);
+
+
+        Iterable<Article> articleIterable = articleRepository.findAll();
+
+        if (articleIterable != null) {
+            articleIterable.forEach(articles::add);
+        }
+
 
         return articles;
     }
@@ -49,7 +56,15 @@ public class ArticleService {
      */
     public Article getAnArticle(int id) {
 
-        return articleRepository.findById(id).get();
+        Article articleFromDB = new Article();
+
+        try {
+            articleFromDB = articleRepository.findById(id).get();
+        } catch (NoSuchElementException ex) {
+            throw new ThereIsNoSuchArticleException();
+        }
+
+        return articleFromDB;
     }
 
     /**

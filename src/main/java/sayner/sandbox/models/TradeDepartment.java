@@ -1,5 +1,7 @@
 package sayner.sandbox.models;
 
+import javax.persistence.ManyToOne;
+
 /**
  * Класс представляет собой отделения магазина
  * В базе ссоответствующая таблица называется
@@ -15,15 +17,16 @@ public class TradeDepartment {
     private int id;
 
     /**
-     * Магазин, в котором располагается отдел
-     * id_branch_shops
-     */
-    private BranchShop branchShop;
-
-    /**
      * Предназначение
      */
     private String appointment;
+
+    /**
+     * Магазин, в котором располагается отдел
+     * id_branch_shops
+     */
+    @ManyToOne
+    private BranchShop branchShop;
 
 
     /**
@@ -62,11 +65,11 @@ public class TradeDepartment {
      * Конструктор устанавливает магазин, в котором располагается отдел и его название
      * т.к. он инкреминтируется автоматически на уровне СУБД
      *
-     * @param branchShop
+     * @param shopId
      * @param appointment
      */
-    public TradeDepartment(BranchShop branchShop, String appointment) {
-        this.branchShop = branchShop;
+    public TradeDepartment(int shopId, String appointment) {
+        this.branchShop = new BranchShop(shopId,"","","","");
         this.appointment = appointment;
     }
 
