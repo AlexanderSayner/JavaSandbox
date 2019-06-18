@@ -1,7 +1,7 @@
-/.idea
-/.git
-/.gradle
-/gradle/*
+.idea/
+.git/
+.gradle/
+gradle/
 
 # Compiled class file
 *.class
