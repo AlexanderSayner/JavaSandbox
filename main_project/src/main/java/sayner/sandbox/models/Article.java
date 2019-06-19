@@ -3,12 +3,11 @@ package sayner.sandbox.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Article")
 public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private int id;
 
     @Column
     private String name;
@@ -23,7 +22,7 @@ public class Article {
         this.manufacturer = manufacturer;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
