@@ -1,71 +1,124 @@
 plugins {
-    id 'java' 
-    id 'application'
+    id "java"
+    id "application"
 }
 
+description = "The main application"
 
-mainClassName = 'sayner.sandbox.Main'
+mainClassName = "sayner.sandbox.Main"
 
 sourceCompatibility = 1.8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
 
-	// Внешние проекты
-	compile project(":liba")
+    // Внешние проекты
+    compile project(":liba")
 
-	// FLYWAY-core
-	// https://mvnrepository.com/artifact/org.flywaydb/flyway-core
-	compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
-
-	// https://mvnrepository.com/artifact/org.flywaydb/flyway-gradle-plugin
-	runtime group: 'org.flywaydb', name: 'flyway-gradle-plugin', version: '5.2.4'
-
-	// SPRING BOOT starter
-
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.1.5.RELEASE', ext: 'pom'
-
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure
-	compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
-
-	// servlet api тут
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.4.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.1.6.RELEASE'
 
 
-	// GRADLE PLUGIN
 
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
-	compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.5.RELEASE', ext: 'pom'
+    // FLYWAY-core
+    // https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
+
+    // https://mvnrepository.com/artifact/org.flywaydb/flyway-gradle-plugin
+    runtime group: 'org.flywaydb', name: 'flyway-gradle-plugin', version: '5.2.4'
+
+    // SPRING BOOT starter
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.1.5.RELEASE', ext: 'pom'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
+
+    // servlet api тут
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.4.RELEASE'
 
 
-	// SPRING BOOT Java Persistence API
+    // GRADLE PLUGIN
 
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.5.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
+    compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.5.RELEASE', ext: 'pom'
 
-	// https://mvnrepository.com/artifact/org.postgresql/postgresql
-	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 
-	// TEST
+    // SPRING BOOT Java Persistence API
 
-	testCompile group: 'junit', name: 'junit', version: '4.12'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.5.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 
 }
 
 
 jar {
-	manifest.attributes("Main-Class": mainClassName);
+    manifest.attributes("Main-Class": mainClassName);
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "5.4.1"
+}
+
+task hey {
+    println "Hello world!"
+}
+
+task upper(dependsOn: "myTask") {
+    String someString = "mY_nAmE"
+    println "Original: " + someString
+    println "Upper case: " + someString.toUpperCase()
+    4.times { print "$it " }
+}
+
+task myTask
+
+
+myTask.doLast( {
+    println "This is done first"
+} )
+
+
+myTask.doFirst( {
+    println "This is done last"
+} )
+
+myTask.doLast {
+    println "This is done 2nd last"
 }
 
 
-task wrapper(type: Wrapper) {
-	gradleVersion = "5.4.1"
+
+apply plugin: GreetingPlugin
+
+greeting.message = "Hi from Gradle"
+
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        // Add the 'greeting' extension object
+        project.extensions.create("greeting", GreetingPluginExtension)
+
+        // Add a task that uses the configuration
+        project.task("hello") {
+            println project.greeting.message
+        }
+    }
+}
+
+class GreetingPluginExtension {
+    def String message = "Hello from GreetingPlugin"
 }

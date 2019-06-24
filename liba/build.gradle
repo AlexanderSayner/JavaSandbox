@@ -2,6 +2,8 @@ plugins {
     id 'java'
 }
 
+description = "The shared API for the application"
+
 group 'sayner.libbox'
 version '1.0-SNAPSHOT'
 

@@ -1,3 +1,5 @@
-rootProject.name = 'Gradle_Multiproject'
+String defaultName = "Gradle_Multiproject"
 
-include 'main_project', 'liba'
+rootProject.name = System.getProperty("rootProjectName") ?: defaultName
+
+include "main_project", "liba"

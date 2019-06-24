@@ -3,6 +3,7 @@ package sayner.sandbox.models;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "article", schema = "public")
 public class Article {
 
     @Id

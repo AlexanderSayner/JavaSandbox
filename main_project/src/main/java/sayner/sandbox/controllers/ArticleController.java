@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sayner.sandbox.log.LogbackConfigXml;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.services.ArticleService;
 
@@ -21,6 +22,9 @@ public class ArticleController {
 
     @GetMapping
     public List<Article> getAllArticles() throws IOException {
+
+        LogbackConfigXml logbackConfigXml = new LogbackConfigXml();
+        logbackConfigXml.performTask();
 
         return articleService.getAllArticles();
     }
