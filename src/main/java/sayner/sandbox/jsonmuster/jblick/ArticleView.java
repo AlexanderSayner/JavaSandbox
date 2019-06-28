@@ -1,6 +1,4 @@
-package sayner.sandbox.jsonpattern.jviews;
-
-import org.omg.PortableServer.IdAssignmentPolicy;
+package sayner.sandbox.jsonmuster.jblick;
 
 /**
  * Здесь можно настроить все необходимы поля для отображения сущности Article

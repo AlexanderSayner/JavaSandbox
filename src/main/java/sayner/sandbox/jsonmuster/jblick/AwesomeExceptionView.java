@@ -1,4 +1,4 @@
-package sayner.sandbox.jsonpattern.jviews;
+package sayner.sandbox.jsonmuster.jblick;
 
 /**
  * Управление отбражением json'а с ошибкой

@@ -2,7 +2,7 @@ package sayner.sandbox.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sayner.sandbox.models.BranchShop;
+import sayner.sandbox.modelle.BranchShop;
 import sayner.sandbox.repositories.BranchShopRepository;
 
 import java.util.ArrayList;

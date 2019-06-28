@@ -1,16 +1,25 @@
 package sayner.sandbox.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sayner.sandbox.jsonpattern.ResponseHandler;
-import sayner.sandbox.jsonpattern.jviews.ArticleView;
-import sayner.sandbox.models.Article;
+import org.springframework.web.util.UriComponentsBuilder;
+import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
+import sayner.sandbox.jsonmuster.ModelResponse;
+import sayner.sandbox.jsonmuster.ResponseHandler;
+import sayner.sandbox.jsonmuster.jblick.ArticleView;
+import sayner.sandbox.modelle.Article;
 import sayner.sandbox.services.ArticleService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Управление каталогом
@@ -21,6 +30,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ModelResponse modelResponse;
 
     /**
      * Отображает каталог товаров
@@ -28,12 +39,24 @@ public class ArticleController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<Object> getAllArticlesTest() {
+    @JsonView(ArticleView.IdTitleDate.class)
+    public ResponseEntity<Object> getAllArticlesTest() throws IOException {
 
-        ResponseHandler responseHandler = new ResponseHandler();
 
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleService.getAllArticles());
+        //ResponseHandler responseHandler = new ResponseHandler();
+
+
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
+        logger.debug("This is an {} message.", "info");
+        logger.info("This is an info message");
+        logger.error("This is an error message");
+
+
+        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleService.getAllArticles(), null);
+
+        //return responseHandler.generateResponse(HttpStatus.OK, true, "Success", articleService.getAllArticles());
     }
 
     /**
@@ -81,5 +104,83 @@ public class ArticleController {
     @DeleteMapping(value = "/{id}")
     public void deleteArticle(@PathVariable int id) {
         articleService.deleteArticle(id);
+    }
+
+    /**
+     * Pagination
+     *
+     * @param page
+     * @param size
+     * @param uriComponentsBuilder
+     * @param response
+     * @return
+     */
+    @GetMapping(params = {"page", "size"})
+    public List<Article> findPaginated(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            UriComponentsBuilder uriComponentsBuilder,
+            HttpServletResponse response
+    ) {
+
+        Page<Article> resultPage = articleService.findPaginated(page, size);
+
+        if (page > resultPage.getTotalPages()) {
+
+            throw new ThereIsNoSuchArticleException();
+        }
+
+        return resultPage.getContent();
+    }
+
+    /**
+     * has to find
+     *
+     * @param name
+     * @return
+     */
+    @GetMapping(params = {"name"})
+    public List<Article> filterByName(
+            @RequestParam("name") String name
+    ) {
+        return articleService.findArticlesByName(name);
+    }
+
+    /**
+     * Вот уже фиьлтруем несколько значений
+     *
+     * @param filtername
+     * @param filtermanufacturer
+     * @return
+     */
+    @GetMapping(params = {"name", "manufacturer"})
+    public List<Article> filterByNameAndManufacturer(
+            @RequestParam("name") String filtername,
+            @RequestParam("manufacturer") String filtermanufacturer
+    ) {
+        return articleService.findArticlesByNameAndManufacturer(filtername, filtermanufacturer);
+    }
+
+    /**
+     * ФИльтрация с примером
+     *
+     * @param page
+     * @param size
+     * @param article
+     * @param uriComponentsBuilder
+     * @param response
+     * @return
+     */
+    @PostMapping(value = "filter")
+    @JsonView(ArticleView.IdTitleDate.class)
+    public Page<Article> filterByExample(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestBody Article article,
+            UriComponentsBuilder uriComponentsBuilder,
+            HttpServletResponse response
+    ) {
+        Article article_ = new Article("Молоко", "Волжские просторы");
+        return articleService.findByExample(page, size, article_);
     }
 }

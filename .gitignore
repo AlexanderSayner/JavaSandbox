@@ -2,6 +2,12 @@
 /target/*
 /.gradle/*
 /.idea/*
+/gradle/*
+/.gradle/*
+/logs/*
+/out/*
+gradlew
+*.bat
 
 # Compiled class file
 *.class

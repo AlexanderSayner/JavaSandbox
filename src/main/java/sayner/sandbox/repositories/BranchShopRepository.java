@@ -1,7 +1,7 @@
 package sayner.sandbox.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import sayner.sandbox.models.BranchShop;
+import sayner.sandbox.modelle.BranchShop;
 
 public interface BranchShopRepository extends CrudRepository<BranchShop, Integer> {
 }

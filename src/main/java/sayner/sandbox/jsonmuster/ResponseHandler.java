@@ -1,4 +1,4 @@
-package sayner.sandbox.jsonpattern;
+package sayner.sandbox.jsonmuster;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
