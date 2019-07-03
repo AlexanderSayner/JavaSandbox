@@ -14,7 +14,7 @@ import sayner.sandbox.jsonmuster.ModelResponse;
 import sayner.sandbox.jsonmuster.ResponseHandler;
 import sayner.sandbox.jsonmuster.jblick.ArticleView;
 import sayner.sandbox.modelle.Article;
-import sayner.sandbox.services.ArticleService;
+import sayner.sandbox.services.ArticleServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.List;
 public class ArticleController {
 
     @Autowired
-    private ArticleService articleService;
+    private ArticleServiceImpl articleService;
     @Autowired
     private ModelResponse modelResponse;
 
@@ -52,6 +52,8 @@ public class ArticleController {
         logger.debug("This is an {} message.", "info");
         logger.info("This is an info message");
         logger.error("This is an error message");
+
+        articleService.method1();
 
 
         return modelResponse.responseEntity(HttpStatus.OK, "like message", articleService.getAllArticles(), null);
@@ -182,5 +184,34 @@ public class ArticleController {
     ) {
         Article article_ = new Article("Молоко", "Волжские просторы");
         return articleService.findByExample(page, size, article_);
+    }
+
+    @GetMapping(value = "filter", params = "name")
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    public List<Article> findBName(@RequestParam("name") String name) {
+
+        return articleService.findByName(name);
+    }
+
+    @GetMapping(value = "filter", params = "manufacturer")
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    public List<Article> findByManufacturer(@RequestParam("manufacturer") String manufacturer) {
+
+        System.out.println(manufacturer);
+        return articleService.findByManufacturer(manufacturer);
+    }
+
+    @GetMapping(value = "filter", params = {"name", "manufacturer"})
+    public List<Article> secondFilterByNameAndManufacturer(
+            @RequestParam("name") String filtername,
+            @RequestParam("manufacturer") String filtermanufacturer
+    ) {
+        return articleService.findArticlesByNameAndManufacturer(filtername, filtermanufacturer);
+    }
+
+    @GetMapping(value = "native")
+    public List<Article> findNavite() {
+
+        return articleService.findNativeAll();
     }
 }

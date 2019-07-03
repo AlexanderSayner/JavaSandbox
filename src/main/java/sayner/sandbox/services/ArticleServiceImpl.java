@@ -3,22 +3,23 @@ package sayner.sandbox.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
 import sayner.sandbox.modelle.Article;
 import sayner.sandbox.repositories.ArticleRepository;
 import sayner.sandbox.specifications.ArticleSpecs;
 
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
 @Service
-public class ArticleService {
+public class ArticleServiceImpl {
 
     /**
      * Подключение репозитория
@@ -26,6 +27,9 @@ public class ArticleService {
      */
     @Autowired
     public ArticleRepository articleRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     //
     // logic methods
@@ -77,10 +81,14 @@ public class ArticleService {
      *
      * @param article
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addArticle(Article article) {
 
         articleRepository.save(article);
+
+        throw new ThereIsNoSuchArticleException();
+
+
     }
 
     /**
@@ -172,5 +180,47 @@ public class ArticleService {
         Example<Article> example = Example.of(exampleArticle);
 
         return articleRepository.findAll(example, firstPageWithTwoElements);
+    }
+
+
+    public List<Article> findByName(String name) {
+
+        List<Article> articlesFromDB = new ArrayList<>();
+
+        try {
+            articlesFromDB = articleRepository.findByName(name);
+        } catch (NoSuchElementException ex) {
+            throw new ThereIsNoSuchArticleException();
+        }
+
+        return articlesFromDB;
+    }
+
+
+    @Annotation1
+    public void method1() {
+        System.out.println("method1");
+        this.method2();
+    }
+
+    @Annotation1
+    public void method2() {
+        System.out.println("method2");
+    }
+
+
+    public List<Article> findByManufacturer(String manufacturer) {
+
+        return articleRepository.findByManufacturer(manufacturer);
+    }
+
+    public List<Article> findByTitleLike(String titleLike) {
+
+        return articleRepository.findByTitleLike(titleLike);
+    }
+
+    public List<Article> findNativeAll() {
+
+        return articleRepository.findFuckingAll();
     }
 }
