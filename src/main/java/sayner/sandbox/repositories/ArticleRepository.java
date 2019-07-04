@@ -28,7 +28,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>,
     List<Article> findByTitleLike(String titleLike);
 
     @Query(value = "SELECT * FROM Articles_List", nativeQuery = true)
-    List<Article> findFuckingAll();
+    List<Article> findNativeAll();
 
 
 

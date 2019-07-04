@@ -221,6 +221,6 @@ public class ArticleServiceImpl {
 
     public List<Article> findNativeAll() {
 
-        return articleRepository.findFuckingAll();
+        return articleRepository.findNativeAll();
     }
 }
