@@ -17,7 +17,7 @@ public class HelloController {
         return "Hi";
     }
 
-    @RequestMapping("/")
+   /* @RequestMapping("/")
     public String index() {
 
         Runnable but_does_it_work = () -> System.out.println("BUT DOES IT WORK");
@@ -67,7 +67,7 @@ public class HelloController {
 
         return "Welcome";
 
-    }
+    }*/
 
     @RequestMapping("/getWithoutRequestParam")
     public List<Object> getWithoutRequestParam(ArticleDTO personDTO) {

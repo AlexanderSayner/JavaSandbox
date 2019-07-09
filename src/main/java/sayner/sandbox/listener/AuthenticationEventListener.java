@@ -21,6 +21,7 @@ public class AuthenticationEventListener implements ApplicationListener<Abstract
     @Autowired
     private ModelResponse modelResponse;
 
+
     @Override
     public void onApplicationEvent(AbstractAuthenticationEvent authenticationEvent) {
         if (authenticationEvent instanceof InteractiveAuthenticationSuccessEvent) {

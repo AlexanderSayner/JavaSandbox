@@ -17,7 +17,7 @@ public class AuthenticationConfiguration extends
                 .inMemoryAuthentication()
                 .withUser("admin")
                 .password(encoder()
-                        .encode("123"))
+                        .encode("12345"))
                 .roles("USER");
     }
 

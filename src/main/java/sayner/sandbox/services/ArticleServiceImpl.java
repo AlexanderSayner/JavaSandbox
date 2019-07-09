@@ -5,6 +5,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
 import sayner.sandbox.modelle.Article;
@@ -86,9 +87,8 @@ public class ArticleServiceImpl {
 
         articleRepository.save(article);
 
-        throw new ThereIsNoSuchArticleException();
-
-
+        // trigger rollback programmatically
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
     }
 
     /**
@@ -103,7 +103,6 @@ public class ArticleServiceImpl {
     public void updateArticle(Article article) {
 
         articleRepository.save(article);
-
     }
 
     /**
