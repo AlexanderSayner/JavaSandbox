@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
+import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
 import sayner.sandbox.modelle.Article;
 import sayner.sandbox.repositories.ArticleRepository;
@@ -47,6 +48,7 @@ public class ArticleServiceImpl {
         List<Article> articles = new ArrayList<>();
 
 
+
         Iterable<Article> articleIterable = articleRepository.findAll();
 
         if (articleIterable != null) {
@@ -82,13 +84,12 @@ public class ArticleServiceImpl {
      *
      * @param article
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(value = "This is some logic value", rollbackFor = Exception.class)
     public void addArticle(Article article) {
 
         articleRepository.save(article);
 
-        // trigger rollback programmatically
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); // trigger rollback programmatically
     }
 
     /**
@@ -99,7 +100,7 @@ public class ArticleServiceImpl {
      *
      * @param article
      */
-    @Transactional
+    @SenselessTransaction
     public void updateArticle(Article article) {
 
         articleRepository.save(article);

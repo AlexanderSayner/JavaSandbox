@@ -14,18 +14,8 @@ import java.util.List;
 @SpringBootTest
 public class RepositoryArticleTest {
 
-    ArticleServiceImpl articleService = new ArticleServiceImpl();
 
     public RepositoryArticleTest() {
     }
 
-    @Test
-    public void testFindByTitleStartsWith() {
-
-        List<Article> articleList = new ArrayList<>();
-
-        articleList=articleService.getAllArticles();
-
-        articleList.forEach(article -> System.out.println(article.getId() + article.getTitle()));
-    }
 }
