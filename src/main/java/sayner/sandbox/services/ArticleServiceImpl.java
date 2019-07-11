@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
@@ -42,11 +44,15 @@ public class ArticleServiceImpl {
      *
      * @return
      */
+    @Transactional(
+            rollbackFor = Exception.class,
+            isolation = Isolation.REPEATABLE_READ,
+            propagation = Propagation.REQUIRED
+            )
     public List<Article> getAllArticles() {
 
         // сюда потом начнут складываться объекты из базы
         List<Article> articles = new ArrayList<>();
-
 
 
         Iterable<Article> articleIterable = articleRepository.findAll();
@@ -66,6 +72,11 @@ public class ArticleServiceImpl {
      * @param id
      * @return
      */
+    @Transactional(
+            rollbackFor = Exception.class,
+            isolation = Isolation.SERIALIZABLE,
+            propagation = Propagation.REQUIRED
+    )
     public Article getAnArticle(int id) {
 
         Article articleFromDB = new Article();
@@ -84,7 +95,10 @@ public class ArticleServiceImpl {
      *
      * @param article
      */
-    @Transactional(value = "This is some logic value", rollbackFor = Exception.class)
+    @Transactional(
+            rollbackFor = Exception.class,
+            isolation = Isolation.READ_UNCOMMITTED,
+            propagation = Propagation.REQUIRES_NEW)
     public void addArticle(Article article) {
 
         articleRepository.save(article);
