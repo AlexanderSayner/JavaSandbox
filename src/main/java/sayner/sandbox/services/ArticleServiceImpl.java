@@ -17,6 +17,9 @@ import sayner.sandbox.specifications.ArticleSpecs;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,6 +42,24 @@ public class ArticleServiceImpl {
     // logic methods
     //
 
+    public List<Article> criterian(String filtered_by, String value) {
+
+        List<Article> articleList = new ArrayList<>();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
+        Root<Article> articleRoot = criteriaQuery.from(Article.class);
+
+        criteriaQuery.select(articleRoot);
+        criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
+        entityManager.createQuery(criteriaQuery)
+                .getResultList()
+                .forEach(article -> articleList.add(article))
+        ;
+
+        return articleList;
+    }
+
     /**
      * Забрать весь список из базы
      *
@@ -48,7 +69,7 @@ public class ArticleServiceImpl {
             rollbackFor = Exception.class,
             isolation = Isolation.REPEATABLE_READ,
             propagation = Propagation.REQUIRED
-            )
+    )
     public List<Article> getAllArticles() {
 
         // сюда потом начнут складываться объекты из базы

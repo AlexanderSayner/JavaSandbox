@@ -19,6 +19,7 @@ import sayner.sandbox.services.ArticleServiceImpl;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,7 +42,6 @@ public class ArticleController {
     @GetMapping
     @JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getAllArticlesTest() throws IOException {
-
 
         //ResponseHandler responseHandler = new ResponseHandler();
 
@@ -75,6 +75,22 @@ public class ArticleController {
 
         return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
                 articleService.getAnArticle(id));
+    }
+
+    /**
+     * Фильтрация с использованием CriteriaBuilder
+     *
+     * @return
+     */
+    @GetMapping(value = "/criteria", params = {"by", "value"})
+    @JsonView(ArticleView.IdTitleDate.class)
+    public ResponseEntity<Object> getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
+                                                         @RequestParam("value") String value) {
+
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+                articleService.criterian(filtered_by, value));
     }
 
     /**
