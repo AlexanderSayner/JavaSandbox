@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
-import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
-import sayner.sandbox.modelle.Article;
+import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepository;
 import sayner.sandbox.specifications.ArticleSpecs;
 

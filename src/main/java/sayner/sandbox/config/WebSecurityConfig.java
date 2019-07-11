@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import sayner.sandbox.ausgenommen.handler.AuthenticationExceptionHandler;
-import sayner.sandbox.jsonmuster.ModelResponse;
+import sayner.sandbox.exceptions.handler.AuthenticationExceptionHandler;
+import sayner.sandbox.jsontemplate.ModelResponse;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {

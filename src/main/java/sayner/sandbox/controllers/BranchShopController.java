@@ -2,7 +2,7 @@ package sayner.sandbox.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sayner.sandbox.modelle.BranchShop;
+import sayner.sandbox.models.BranchShop;
 import sayner.sandbox.services.BranchShopService;
 
 import java.util.List;

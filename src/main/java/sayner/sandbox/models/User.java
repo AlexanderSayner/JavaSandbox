@@ -1,4 +1,4 @@
-package sayner.sandbox.modelle;
+package sayner.sandbox.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

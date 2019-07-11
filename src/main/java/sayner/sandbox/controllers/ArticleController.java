@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
-import sayner.sandbox.jsonmuster.ModelResponse;
-import sayner.sandbox.jsonmuster.ResponseHandler;
-import sayner.sandbox.jsonmuster.jblick.ArticleView;
-import sayner.sandbox.modelle.Article;
+import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.jsontemplate.ModelResponse;
+import sayner.sandbox.jsontemplate.ResponseHandler;
+import sayner.sandbox.jsontemplate.jblick.ArticleView;
+import sayner.sandbox.models.Article;
 import sayner.sandbox.services.ArticleServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;

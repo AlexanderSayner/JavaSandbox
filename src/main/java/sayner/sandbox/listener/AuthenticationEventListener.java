@@ -7,8 +7,8 @@ import org.springframework.security.authentication.event.AbstractAuthenticationE
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import sayner.sandbox.autorisierung.UserData;
-import sayner.sandbox.jsonmuster.ModelResponse;
+import sayner.sandbox.authorization.UserData;
+import sayner.sandbox.jsontemplate.ModelResponse;
 
 import java.io.IOException;
 

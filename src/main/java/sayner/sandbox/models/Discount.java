@@ -1,4 +1,4 @@
-package sayner.sandbox.modelle;
+package sayner.sandbox.models;
 
 /**
  * Класс представляет собой скидку

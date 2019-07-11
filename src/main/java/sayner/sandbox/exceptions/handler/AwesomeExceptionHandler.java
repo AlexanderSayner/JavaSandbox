@@ -1,4 +1,4 @@
-package sayner.sandbox.ausgenommen.handler;
+package sayner.sandbox.exceptions.handler;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
-import sayner.sandbox.jsonmuster.ResponseHandler;
-import sayner.sandbox.jsonmuster.jblick.AwesomeExceptionView;
+import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.jsontemplate.ResponseHandler;
+import sayner.sandbox.jsontemplate.jblick.AwesomeExceptionView;
 
 /**
  * Вот эта штука говорит Spring boot выдать такое исключение, кооторое хочу видеть я (клиент данного сервиса)

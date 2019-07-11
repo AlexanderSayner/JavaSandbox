@@ -1,4 +1,4 @@
-package sayner.sandbox.autorisierung;
+package sayner.sandbox.authorization;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

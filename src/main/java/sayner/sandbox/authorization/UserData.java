@@ -1,4 +1,4 @@
-package sayner.sandbox.autorisierung;
+package sayner.sandbox.authorization;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;

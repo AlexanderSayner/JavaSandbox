@@ -1,4 +1,4 @@
-package sayner.sandbox.ausgenommen;
+package sayner.sandbox.exceptions;
 
 /**
  * Вот эта штука срабатывает в сервисе

@@ -1,7 +1,7 @@
 package sayner.sandbox.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
-import sayner.sandbox.modelle.Article ;
+import sayner.sandbox.models.Article ;
 
 public class ArticleSpecs {
 

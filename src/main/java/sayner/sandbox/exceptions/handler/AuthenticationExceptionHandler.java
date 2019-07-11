@@ -1,4 +1,4 @@
-package sayner.sandbox.ausgenommen.handler;
+package sayner.sandbox.exceptions.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

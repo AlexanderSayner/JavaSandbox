@@ -31,6 +31,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
     compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.5.RELEASE', ext: 'pom'
 
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools
+    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.1.6.RELEASE'
+
+
 
     // SPRING BOOT SECURITY
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security

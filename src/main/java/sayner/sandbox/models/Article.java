@@ -1,8 +1,8 @@
-package sayner.sandbox.modelle;
+package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import sayner.sandbox.jsonmuster.jblick.ArticleView;
+import sayner.sandbox.jsontemplate.jblick.ArticleView;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

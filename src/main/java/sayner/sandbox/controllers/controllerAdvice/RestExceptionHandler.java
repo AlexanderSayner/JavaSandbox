@@ -9,9 +9,9 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import sayner.sandbox.ausgenommen.ModelException;
-import sayner.sandbox.ausgenommen.ThereIsNoSuchArticleException;
-import sayner.sandbox.jsonmuster.ModelResponse;
+import sayner.sandbox.exceptions.ModelException;
+import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.jsontemplate.ModelResponse;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.ServletException;
