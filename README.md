@@ -1,7 +1,7 @@
 # JavaSandbox
 Сюда стекает абсолютно всё, что моей душе угодно
 
-# Hot to f* start it
+# How to f* start it
 
 # This is gods command, if works, it's all ok
 ./gradlew -version  
