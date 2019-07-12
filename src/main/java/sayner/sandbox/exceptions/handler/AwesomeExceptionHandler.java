@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ResponseHandler;
-import sayner.sandbox.jsontemplate.jblick.AwesomeExceptionView;
+import sayner.sandbox.jsontemplate.jview.AwesomeExceptionView;
 
 /**
  * Вот эта штука говорит Spring boot выдать такое исключение, кооторое хочу видеть я (клиент данного сервиса)

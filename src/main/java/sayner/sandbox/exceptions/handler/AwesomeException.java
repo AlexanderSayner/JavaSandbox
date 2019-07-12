@@ -1,7 +1,7 @@
 package sayner.sandbox.exceptions.handler;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import sayner.sandbox.jsontemplate.jblick.AwesomeExceptionView;
+import sayner.sandbox.jsontemplate.jview.AwesomeExceptionView;
 
 /**
  * Вот это штука пойдёт в json

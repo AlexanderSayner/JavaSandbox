@@ -1,7 +1,8 @@
 package sayner.sandbox.specifications;
 
+import org.hibernate.type.SpecialOneToOneType;
 import org.springframework.data.jpa.domain.Specification;
-import sayner.sandbox.models.Article ;
+import sayner.sandbox.models.Article;
 
 public class ArticleSpecs {
 
@@ -45,4 +46,26 @@ public class ArticleSpecs {
 
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("manufacturer"), manufactorer);
     }
+
+    /**
+     * Возвращается всё
+     *
+     * @return
+     */
+    public Specification<Article> getAllArticles() {
+
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("id"), 0);
+    }
+
+    /**
+     * Like - запрос
+     *
+     * @param like_this
+     * @return
+     */
+    public Specification<Article> getNameLike(String like_this) {
+
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("name"), like_this);
+    }
+
 }

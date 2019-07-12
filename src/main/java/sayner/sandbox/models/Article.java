@@ -2,7 +2,7 @@ package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import sayner.sandbox.jsontemplate.jblick.ArticleView;
+import sayner.sandbox.jsontemplate.jview.ArticleView;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

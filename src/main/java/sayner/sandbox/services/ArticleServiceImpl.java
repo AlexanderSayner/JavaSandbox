@@ -42,6 +42,7 @@ public class ArticleServiceImpl {
     // logic methods
     //
 
+    @SenselessTransaction
     public List<Article> criterian(String filtered_by, String value) {
 
         List<Article> articleList = new ArrayList<>();
@@ -176,11 +177,32 @@ public class ArticleServiceImpl {
      * @param name
      * @return
      */
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByName(String name) {
 
         ArticleSpecs specs = new ArticleSpecs();
 
-        return articleRepository.findAll(specs.getArticlesByName(name));
+        if (name != "") {
+            return articleRepository.findAll(specs.getArticlesByName(name));
+        } else {
+            return articleRepository.findAll(specs.getAllArticles());
+        }
+    }
+
+    /**
+     * Ищет подобные значения по колонке name
+     *
+     * @param like_this
+     * @return
+     */
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRED)
+    public List<Article> findArticleLikeName(String like_this) {
+
+        like_this = "%" + like_this + "%";
+
+        ArticleSpecs specs = new ArticleSpecs();
+
+        return articleRepository.findAll(specs.getNameLike(like_this));
     }
 
     /**
@@ -190,6 +212,7 @@ public class ArticleServiceImpl {
      * @param manufacturer
      * @return
      */
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByNameAndManufacturer(String name, String manufacturer) {
 
         ArticleSpecs specs = new ArticleSpecs();

@@ -1,4 +1,4 @@
-package sayner.sandbox.jsontemplate.jblick;
+package sayner.sandbox.jsontemplate.jview;
 
 /**
  * Здесь можно настроить все необходимы поля для отображения сущности Article

@@ -12,14 +12,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
-import sayner.sandbox.jsontemplate.jblick.ArticleView;
+import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.services.ArticleServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -158,10 +157,17 @@ public class ArticleController {
      * @return
      */
     @GetMapping(params = {"name"})
-    public List<Article> filterByName(
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    public ResponseEntity<Object> filterByName(
             @RequestParam("name") String name
     ) {
-        return articleService.findArticlesByName(name);
+        ResponseHandler responseHandler = new ResponseHandler();
+
+//        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+//                articleService.findArticlesByName(name));
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+                articleService.findArticleLikeName(name));
     }
 
     /**
