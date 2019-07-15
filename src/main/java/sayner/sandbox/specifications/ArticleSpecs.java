@@ -1,6 +1,5 @@
 package sayner.sandbox.specifications;
 
-import org.hibernate.type.SpecialOneToOneType;
 import org.springframework.data.jpa.domain.Specification;
 import sayner.sandbox.models.Article;
 

@@ -2,6 +2,7 @@ package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.UpdateTimestamp;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
 
 import javax.persistence.*;
@@ -66,6 +67,8 @@ public class Article {
     @JsonView(ArticleView.IdTitleDate.class)
     private LocalDateTime creationDateTime;
 
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     /**
      * getter'ы & setter'ы
@@ -75,7 +78,7 @@ public class Article {
         return id;
     }
 
-    public String getStringId(){
+    public String getStringId() {
         return String.valueOf(getId());
     }
 
@@ -105,6 +108,10 @@ public class Article {
 
     // Теперь setter'ы
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -128,6 +135,15 @@ public class Article {
     public void setCreationDateTime(LocalDateTime creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 
     /**
      * Default конструктор
@@ -184,5 +200,12 @@ public class Article {
         this.name = name;
         this.mass_si = mass_si;
         this.garantee = garantee;
+    }
+
+
+    @Override
+    public String toString() {
+
+        return "Article entity: " + this.id + ", " + this.name + ", " + this.title + ", " + this.manufacturer + ".";
     }
 }

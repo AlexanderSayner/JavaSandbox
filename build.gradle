@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'net.ltgt.apt' version '0.8'
 }
 
 group 'sayner.sandbox'
@@ -13,6 +14,8 @@ mainClassName = 'sayner.sandbox.Start'
 repositories {
     mavenCentral()
 }
+
+def mapstructVersion="1.3.0.Final"
 
 dependencies {
 
@@ -67,8 +70,12 @@ dependencies {
     implementation group: 'joda-time', name: 'joda-time', version: '2.10.2'
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    //compileOnly 'org.projectlombok:lombok:1.18.8'
-    //annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+    // mapstruct
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
 
 

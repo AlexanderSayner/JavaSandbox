@@ -1,7 +1,5 @@
 package sayner.sandbox.controllers.controllerAdvice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,9 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
-import java.io.File;
-
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler implements AccessDeniedHandler {
 
@@ -33,18 +28,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler impleme
          */
         ModelException me = new ModelException("Shops not found", EntityNotFoundException.class);
 
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File("/home/uarchon/Development/response.json"), me);
-
-
         ModelResponse modelResponse = new ModelResponse();
 
         /**
          * Return json response in page
          */
-        return modelResponse.responseEntity(HttpStatus.OK, "Not success",null, me);
+        return modelResponse.responseEntity(HttpStatus.OK, "Not success", null, me);
     }
 
     @Override

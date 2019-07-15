@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import sayner.sandbox.dto.ArticleDTO;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.services.ArticleServiceImpl;
 
@@ -28,10 +30,12 @@ import java.util.List;
 @RequestMapping("/articles")
 public class ArticleController {
 
+
     @Autowired
     private ArticleServiceImpl articleService;
     @Autowired
     private ModelResponse modelResponse;
+
 
     /**
      * Отображает каталог товаров
@@ -39,7 +43,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping
-    @JsonView(ArticleView.IdTitleDate.class)
+    //@JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getAllArticlesTest() throws IOException {
 
         //ResponseHandler responseHandler = new ResponseHandler();
@@ -54,10 +58,17 @@ public class ArticleController {
 
         articleService.method1();
 
+        ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleService.getAllArticles(), null);
+        Article article = new Article(1, "df", "ag", "dsf", 13, "hai");
+        ArticleDTO articleDTO = articleMapper.toArticleDTO(article);
+        Article transformed_article = articleMapper.toArticle(articleDTO);
 
-        //return responseHandler.generateResponse(HttpStatus.OK, true, "Success", articleService.getAllArticles());
+        System.out.println(article.toString());
+        System.out.println(articleDTO.toString());
+        System.out.println(transformed_article.toString());
+
+        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
     }
 
     /**
@@ -68,12 +79,15 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/{id}")
-    @JsonView(ArticleView.IdTitleDate.class)
+//    @JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getArticle(@PathVariable int id) {
         ResponseHandler responseHandler = new ResponseHandler();
 
+        ArticleMapper articleMapper = ArticleMapper.INSTANCE;
+
         return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleService.getAnArticle(id));
+                articleMapper.toArticleDTO(articleService.getAnArticle(id)));
+//                articleService.getAnArticle(id));
     }
 
     /**
