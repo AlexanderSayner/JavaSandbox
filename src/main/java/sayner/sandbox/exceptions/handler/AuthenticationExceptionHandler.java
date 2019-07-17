@@ -1,4 +1,5 @@
 package sayner.sandbox.exceptions.handler;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 
 @Component
@@ -20,19 +22,19 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint,
 
         HttpStatus my_status;
 
-        switch (response.getStatus()){
+        switch (response.getStatus()) {
 
             case 403:
-                my_status= HttpStatus.FORBIDDEN;
+                my_status = HttpStatus.FORBIDDEN;
                 break;
 
             default:
-                my_status= HttpStatus.UNAUTHORIZED;
+                my_status = HttpStatus.UNAUTHORIZED;
                 break;
 
         }
 
-        String responseMsg = "{ \"http status\" : \""+ my_status +"\", \"response status\" : \""+ response.getStatus() +"\", \"message\" : \"Костыльный json\", \"error\" : \""+ authException.getMessage() +"\" }";
+        String responseMsg = "{ \"http status\" : \"" + my_status + "\", \"response status\" : \"" + response.getStatus() + "\", \"message\" : \"Костыльный json\", \"error\" : \"" + authException.getMessage() + "\" }";
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(responseMsg);
 
