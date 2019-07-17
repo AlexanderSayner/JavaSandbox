@@ -255,10 +255,10 @@ public class Article {
                 if (!this.garantee.equals(anotherArticle.garantee)) //проверка на соответствие
                     return false;
             }
-            if (this.creationDateTime != anotherArticle.creationDateTime)
-                return false;
-            if (this.updatedAt != anotherArticle.updatedAt)
-                return false;
+//            if (this.creationDateTime != anotherArticle.creationDateTime)
+//                return false;
+//            if (this.updatedAt != anotherArticle.updatedAt)
+//                return false;
         }
         return true;
     }

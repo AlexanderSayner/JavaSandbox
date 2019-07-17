@@ -1,4 +1,4 @@
-package sayner.sandbox.services;
+package sayner.sandbox.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -12,8 +12,9 @@ import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
-import sayner.sandbox.repositories.ArticleRepoHibernateImpl;
+import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.repositories.ArticleRepository;
+import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.specifications.ArticleSpecs;
 
 import javax.persistence.EntityManager;
@@ -27,7 +28,7 @@ import java.util.NoSuchElementException;
 
 
 @Service
-public class ArticleServiceImpl {
+public class ArticleServiceImpl implements ArticleService {
 
     /**
      * Подключение репозитория
@@ -111,7 +112,10 @@ public class ArticleServiceImpl {
 //            articleFromDB = articleRepository.findById(id).get();
             articleFromDB = articleRepoHibernate.findById(id);
 
-        } catch (NoSuchElementException ex) {
+            if (articleFromDB == null)
+                throw new ThereIsNoSuchArticleException();
+
+        } catch (Exception ex) {
             throw new ThereIsNoSuchArticleException();
         }
 
@@ -123,6 +127,7 @@ public class ArticleServiceImpl {
      *
      * @param article
      */
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             isolation = Isolation.READ_UNCOMMITTED,
@@ -142,6 +147,7 @@ public class ArticleServiceImpl {
      *
      * @param article
      */
+    @Override
     @SenselessTransaction
     public void updateArticle(Article article) {
 
@@ -153,6 +159,7 @@ public class ArticleServiceImpl {
      *
      * @param id
      */
+    @Override
     @Transactional
     public void deleteArticle(int id) {
 
@@ -282,6 +289,7 @@ public class ArticleServiceImpl {
 
         return articleRepository.findByTitleLike(titleLike);
     }
+
 
     public List<Article> findNativeAll() {
 

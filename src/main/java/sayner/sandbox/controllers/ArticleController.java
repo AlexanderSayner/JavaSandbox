@@ -16,7 +16,7 @@ import sayner.sandbox.jsontemplate.ResponseHandler;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
-import sayner.sandbox.services.ArticleServiceImpl;
+import sayner.sandbox.services.impl.ArticleServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -91,8 +91,8 @@ public class ArticleController {
         System.out.println("The first one" + articleOne.toString());
         System.out.println("The second one" + articleTwo.toString());
 
-        System.out.println(articleOne.getTitle());
-        System.out.println(articleTwo.getTitle());
+        System.out.println(articleOne.getCreationDateTime());
+        System.out.println(articleTwo.getCreationDateTime());
 
         System.out.println("СРАВНЕНИЕ equals");
         System.out.println(articleTwo.equals(articleOne));
