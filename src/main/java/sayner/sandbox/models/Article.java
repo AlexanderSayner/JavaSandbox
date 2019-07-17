@@ -7,6 +7,7 @@ import sayner.sandbox.jsontemplate.jview.ArticleView;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс представляет собой каталог
@@ -208,5 +209,57 @@ public class Article {
     public String toString() {
 
         return "Article entity: " + this.id + ", " + this.name + ", " + this.title + ", " + this.manufacturer + ".";
+    }
+
+    /**
+     * хэш число на основе всех полей объекта
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                this.title,
+                this.manufacturer,
+                this.name,
+                this.id,
+                this.garantee,
+                this.mass_si,
+                this.creationDateTime,
+                this.updatedAt
+        );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (this.getClass() != o.getClass()) {
+            return false;
+        } else {
+            Article anotherArticle = (Article) o;
+            if (this.id != anotherArticle.id)
+                return false;
+            if (!this.title.equals(anotherArticle.title))
+                return false;
+            if (!this.manufacturer.equals(anotherArticle.manufacturer))
+                return false;
+            if (!this.name.equals(anotherArticle.name))
+                return false;
+            if (this.mass_si != anotherArticle.mass_si)
+                return false;
+            // если они оба null, то считается как соответвие, и проверка идёт дальше
+            if (this.garantee != null && anotherArticle.garantee != null) { //проверка на null
+                if (!this.garantee.equals(anotherArticle.garantee)) //проверка на соответствие
+                    return false;
+            }
+            if (this.creationDateTime != anotherArticle.creationDateTime)
+                return false;
+            if (this.updatedAt != anotherArticle.updatedAt)
+                return false;
+        }
+        return true;
     }
 }

@@ -85,6 +85,21 @@ public class ArticleController {
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
+        Article articleOne = articleService.getAnArticle(id);
+        Article articleTwo = articleService.getAnArticle(id);
+
+        System.out.println("The first one" + articleOne.toString());
+        System.out.println("The second one" + articleTwo.toString());
+
+        System.out.println(articleOne.getTitle());
+        System.out.println(articleTwo.getTitle());
+
+        System.out.println("СРАВНЕНИЕ equals");
+        System.out.println(articleTwo.equals(articleOne));
+
+        System.out.println("СРАВНЕНИЕ hashCode");
+        System.out.println(articleTwo.hashCode() == articleOne.hashCode());
+
         return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
                 articleMapper.toArticleDTO(articleService.getAnArticle(id)));
 
