@@ -87,7 +87,7 @@ public class ArticleController {
 
         return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
                 articleMapper.toArticleDTO(articleService.getAnArticle(id)));
-//                articleService.getAnArticle(id));
+
     }
 
     /**

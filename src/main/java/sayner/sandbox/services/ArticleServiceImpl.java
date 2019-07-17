@@ -12,6 +12,7 @@ import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.repositories.ArticleRepoHibernateImpl;
 import sayner.sandbox.repositories.ArticleRepository;
 import sayner.sandbox.specifications.ArticleSpecs;
 
@@ -33,7 +34,10 @@ public class ArticleServiceImpl {
      * Injects the ArticleRepository instance
      */
     @Autowired
-    public ArticleRepository articleRepository;
+    private ArticleRepository articleRepository;
+
+    private ArticleRepoHibernateImpl articleRepoHibernate = new ArticleRepoHibernateImpl();
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -104,7 +108,9 @@ public class ArticleServiceImpl {
         Article articleFromDB = new Article();
 
         try {
-            articleFromDB = articleRepository.findById(id).get();
+//            articleFromDB = articleRepository.findById(id).get();
+            articleFromDB = articleRepoHibernate.findById(id);
+
         } catch (NoSuchElementException ex) {
             throw new ThereIsNoSuchArticleException();
         }

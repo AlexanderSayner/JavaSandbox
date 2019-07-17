@@ -62,11 +62,12 @@ public class Article {
     @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
     private String garantee;
 
-    @Column(updatable = false)
+    @Column(updatable = false, name = "creation_date_time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
     @JsonView(ArticleView.IdTitleDate.class)
     private LocalDateTime creationDateTime;
 
+    @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
