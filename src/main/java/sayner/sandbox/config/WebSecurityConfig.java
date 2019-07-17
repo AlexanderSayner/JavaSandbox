@@ -12,6 +12,8 @@ import sayner.sandbox.exceptions.handler.AuthenticationExceptionHandler;
 import sayner.sandbox.models.User;
 import sayner.sandbox.repositories.UserDetailsRepo;
 
+import java.time.LocalDateTime;
+
 @Configuration
 @EnableWebSecurity
 @EnableOAuth2Sso
@@ -50,10 +52,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo){
+    public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo) {
 
         return map -> {
-            return new User();
+            String stringId = (String) map.get("sub");
+            User user = userDetailsRepo.findById(stringId).orElseGet(() -> {
+                User newUser=new User();
+
+                newUser.setId(stringId);
+                newUser.setName((String) map.get("name"));
+                newUser.setEmail((String) map.get("email"));
+                newUser.setGender((String) map.get("gender"));
+                newUser.setLocale((String) map.get("locale"));
+                newUser.setUserpic((String) map.get("picture"));
+
+                return newUser;
+            });
+
+            user.setLastVisit(LocalDateTime.now());
+
+            return  userDetailsRepo.save(user);
         };
     }
 
