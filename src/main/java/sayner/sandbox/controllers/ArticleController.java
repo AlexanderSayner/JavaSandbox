@@ -106,6 +106,22 @@ public class ArticleController {
     }
 
     /**
+     * Эксперименты с сессией таам всякие
+     *
+     * @param name
+     * @return
+     */
+    @GetMapping(value = "/session", params = {"name"})
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    public ResponseEntity<Object> getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
+
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success. What about any hibernate sessions?",
+                articleService.getArticlesUsingCriteriaSession(name));
+    }
+
+    /**
      * Фильтрация с использованием CriteriaBuilder
      *
      * @return

@@ -116,10 +116,15 @@ public class ArticleServiceImpl implements ArticleService {
                 throw new ThereIsNoSuchArticleException();
 
         } catch (Exception ex) {
-            throw new ThereIsNoSuchArticleException();
+             throw new ThereIsNoSuchArticleException();
         }
 
         return articleFromDB;
+    }
+
+    public List<Article> getArticlesUsingCriteriaSession(String name){
+
+        return articleRepoHibernate.findAllOrderByNameUsingCriteriaQuery(name);
     }
 
     /**
