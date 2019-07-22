@@ -12,19 +12,22 @@ import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
-import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.repositories.ArticleRepository;
+import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.specifications.ArticleSpecs;
 
+import javax.crypto.AEADBadTagException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 
 @Service
@@ -37,8 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    private ArticleRepoHibernateImpl articleRepoHibernate = new ArticleRepoHibernateImpl();
-
+    @Autowired
+    private ArticleRepoHibernateImpl articleRepoHibernate;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -109,22 +112,26 @@ public class ArticleServiceImpl implements ArticleService {
         Article articleFromDB = new Article();
 
         try {
-//            articleFromDB = articleRepository.findById(id).get();
-            articleFromDB = articleRepoHibernate.findById(id);
-
-            if (articleFromDB == null)
-                throw new ThereIsNoSuchArticleException();
+            articleFromDB = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
+//            articleFromDB = articleRepoHibernate.findById(id);
 
         } catch (Exception ex) {
-             throw new ThereIsNoSuchArticleException();
+            throw new ThereIsNoSuchArticleException();
         }
 
         return articleFromDB;
     }
 
-    public List<Article> getArticlesUsingCriteriaSession(String name){
+    @SenselessTransaction
+    public List<Article> getArticlesUsingCriteriaSession(String name) {
 
-        return articleRepoHibernate.findAllOrderByNameUsingCriteriaQuery(name);
+        return articleRepoHibernate.findAllLikeNameOrderByTitleUsingCriteriaQuery(name);
+    }
+
+    @SenselessTransaction
+    public List<Article> getArticlesLikeManufacturerUsingCriteriaSession(String manufacturer) {
+
+        return articleRepoHibernate.findAllLikeManufacturer(manufacturer);
     }
 
     /**

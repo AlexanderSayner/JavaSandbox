@@ -46,9 +46,6 @@ public class ArticleController {
     //@JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getAllArticlesTest() throws IOException {
 
-        //ResponseHandler responseHandler = new ResponseHandler();
-
-
         Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
@@ -120,6 +117,17 @@ public class ArticleController {
         return responseHandler.generateResponse(HttpStatus.OK, true, "Success. What about any hibernate sessions?",
                 articleService.getArticlesUsingCriteriaSession(name));
     }
+
+    @GetMapping(value = "/session", params = {"manufacturer"})
+    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    public ResponseEntity<Object> getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
+
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
+                articleService.getArticlesLikeManufacturerUsingCriteriaSession(manufacturer));
+    }
+
 
     /**
      * Фильтрация с использованием CriteriaBuilder

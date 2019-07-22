@@ -1,5 +1,12 @@
 package sayner.sandbox.dto;
 
+import org.omg.CORBA.INTERNAL;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 public class ArticleDTO {
 
     /**

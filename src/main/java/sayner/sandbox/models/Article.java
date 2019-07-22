@@ -3,6 +3,8 @@ package sayner.sandbox.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
 
 import javax.persistence.*;
@@ -151,6 +153,8 @@ public class Article {
      * Default конструктор
      */
     public Article() {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        logger.trace("Конструктор без аргументов класса {}", Article.class);
     }
 
     /**
