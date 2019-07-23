@@ -27,6 +27,7 @@ public class Article {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     @JsonView(ArticleView.Id.class)
     private int id;
 
