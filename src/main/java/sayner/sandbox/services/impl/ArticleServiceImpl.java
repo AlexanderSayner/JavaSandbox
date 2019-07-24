@@ -17,17 +17,14 @@ import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.specifications.ArticleSpecs;
 
-import javax.crypto.AEADBadTagException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Supplier;
 
 
 @Service
@@ -81,11 +78,15 @@ public class ArticleServiceImpl implements ArticleService {
     )
     public List<Article> getAllArticles() {
 
+        // TESTING
+        this.articleRepoHibernate.ArticleSoftDeleteMethod();
+        // TESTING
+
         // сюда потом начнут складываться объекты из базы
         List<Article> articles = new ArrayList<>();
 
 
-        Iterable<Article> articleIterable = articleRepository.findAll();
+        Iterable<Article> articleIterable = articleRepository.findAll() ;
 
         if (articleIterable != null) {
             articleIterable.forEach(articles::add);

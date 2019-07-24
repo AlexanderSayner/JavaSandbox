@@ -2,10 +2,13 @@ package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.models.enums.ArticleState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,8 +22,15 @@ import java.util.Objects;
  * #3
  */
 @Entity
+// Override default hibernate delete operation
+@SQLDelete(sql = "UPDATE Articles_List SET state = 'DELETED' WHERE id = ?", check = ResultCheckStyle.COUNT)
+// By default: @SQLDelete(sql = "DELETE from Articles_List WHERE id = ?", check = ResultCheckStyle.COUNT)
+@NamedQuery(name = "Article.FindByName", query = "from Article a WHERE a.name like :name")
 @Table(name = "Articles_List")
 public class Article {
+
+    @Transient
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Индентификатор БД
@@ -30,6 +40,10 @@ public class Article {
     @Column(updatable = false, nullable = false)
     @JsonView(ArticleView.Id.class)
     private int id;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ArticleState state;
 
     /**
      * Наименование товара
@@ -149,6 +163,19 @@ public class Article {
         this.updatedAt = updatedAt;
     }
 
+    public ArticleState getState() {
+        return state;
+    }
+
+    public void setState(ArticleState state) {
+        this.state = state;
+    }
+
+    @PreRemove
+    public void deleteAnArticle() {
+        logger.info("Set to state DELETED");
+        this.setState(ArticleState.DELETED);
+    }
 
     /**
      * Default конструктор
