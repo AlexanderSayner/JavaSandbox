@@ -1,5 +1,7 @@
 package sayner.sandbox.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +31,8 @@ import java.util.NoSuchElementException;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Подключение репозитория
@@ -86,7 +90,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> articles = new ArrayList<>();
 
 
-        Iterable<Article> articleIterable = articleRepository.findAll() ;
+        Iterable<Article> articleIterable = articleRepository.findAll();
 
         if (articleIterable != null) {
             articleIterable.forEach(articles::add);
@@ -112,13 +116,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article articleFromDB = new Article();
 
-        try {
-            articleFromDB = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
-//            articleFromDB = articleRepoHibernate.findById(id);
-
-        } catch (Exception ex) {
-            throw new ThereIsNoSuchArticleException();
-        }
+//            articleFromDB = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
+        articleFromDB = articleRepoHibernate.findById(id);
 
         return articleFromDB;
     }

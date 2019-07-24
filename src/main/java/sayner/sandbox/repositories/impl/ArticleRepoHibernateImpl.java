@@ -33,7 +33,12 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public Article findById(int id) {
 
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Article.class, id);
+        Article article = HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Article.class, id);
+        if (article == null) {
+            logger.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
+            throw new ThereIsNoSuchArticleException();
+        }
+        return article;
     }
 
     @Override
