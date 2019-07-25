@@ -106,6 +106,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         logger.info("=== Article in the Database ===");
         logger.info("=== And Article can be read ===");
 
+        //==========================================================================================
+
         entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
@@ -156,12 +158,55 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         entityManager.remove(article);
         entityManager.flush();
 
+
         logger.info("=== An Article is really deleted now ===");
         logger.info("=== " + article.getState() + " ===");
+
+        Article artcl = entityManager.find(Article.class, article.getId());
+        if (artcl == null) {
+            logger.info("=== Результат, article = null, id = " + article.getId());
+        } else {
+            logger.error("=== Результат: article != null, id = " + article.getId());
+        }
+
+        logger.info("=== Articles name: " + artcl.getName() + " ===");
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
+        //==========================================================================================
 
+        entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        article = entityManager.find(Article.class, article.getId());
+        if (article == null) {
+            logger.info("=== article не найден " + article.getId());
+        } else {
+            logger.info("=== article найден, state = " + article.getState());
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    public void addEntitiesToTheDatabase() {
+
+        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        int counter = 1000;
+        while (--counter > 0) {
+
+            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope");
+
+            entityManager.persist(article);
+            entityManager.flush();
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        logger.info("=== From repo: all articles have been added to the database");
     }
 }

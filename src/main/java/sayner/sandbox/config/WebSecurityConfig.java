@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationExceptionHandler authenticationExceptionHandler;
 
-
+    // HTTP Basic authorization :
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {
 //
@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authenticationEntryPoint(authenticationExceptionHandler);
 //    }
 
+    // OAuth2 authorization :
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -46,8 +47,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
-//                .exceptionHandling()
-//                .authenticationEntryPoint(authenticationExceptionHandler)
         ;
     }
 

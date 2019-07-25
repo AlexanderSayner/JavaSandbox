@@ -307,4 +307,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         return articleRepository.findNativeAll();
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    public void fillTheDatabase(){
+        this.articleRepoHibernate.addEntitiesToTheDatabase();
+    }
 }
