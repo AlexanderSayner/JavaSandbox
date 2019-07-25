@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
@@ -16,7 +19,6 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -297,7 +299,6 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         //**************************
 
         logger.info("=== Find entity by id ===");
-        founded_article = null;
         founded_article = entityManager.find(Article.class, article.getId());
 
         if (founded_article == null) {
@@ -319,8 +320,87 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     }
 
     /**
-     *
-     *
+     * Объявлять транзакцию нужно в сервисе, но здесь эксперимент
+     */
+    public void ThirdCheck() {
+
+        logger.info("\n");
+        logger.info("===================================================================");
+        logger.info("=== Persistent context check has been started (Session Factory) ===");
+        logger.info("===================================================================");
+        logger.info("\n");
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Open the session ===");
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        logger.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        logger.info("=== Creating an experimental entity ===");
+        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh");
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Push it into the context ===");
+        session.persist(article);
+        session.flush();
+
+        logger.info("=== Find entity by id ===");
+        Article founded_article = session.find(Article.class, article.getId());
+
+        if (founded_article == null) {
+            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+        } else {
+            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+        }
+
+        logger.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+        logger.info("=== Closing session ===");
+        session.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Open the session ===");
+        session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        logger.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        logger.info("=== Now change name of the article entity and repeat the experiment");
+        article.setName("Session rabbit");
+
+        logger.info("=== Trying to merge entity ===");
+        session.merge(article);
+
+        logger.info("=== Find entity by id ===");
+        founded_article = session.find(Article.class, article.getId());
+
+        if (founded_article == null) {
+            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+        } else {
+            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+        }
+
+        logger.info("=== That's good, SessionFactory works well too ===");
+
+        logger.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+        logger.info("=== Closing session ===");
+        session.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Finished ===");
+    }
+
+    /**
      *
      */
     public void addEntitiesToTheDatabase() {
