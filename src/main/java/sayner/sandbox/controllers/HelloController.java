@@ -40,7 +40,22 @@ public class HelloController {
 
         logger.info("=== Entities have added to the database ===");
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", "{ status : operation complete }", null);
+        class DtoClassWithData {
+            private String status;
+
+            public DtoClassWithData() {
+            }
+
+            public DtoClassWithData(String status) {
+                this.status = status;
+            }
+
+            public String getStatus() {
+                return status;
+            }
+        }
+
+        return modelResponse.responseEntity(HttpStatus.OK, "like message", new DtoClassWithData("operation complete"), null);
     }
 
 }

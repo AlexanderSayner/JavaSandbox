@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .mvcMatchers("/").permitAll()
+                .mvcMatchers("/hello").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

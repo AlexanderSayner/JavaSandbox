@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="30 seconds" >
+
+    <property name="LOG_PATH" value="logs"/>
+
+    <timestamp key="timestamp-by-second" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <!-- To Console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--                          It is like System.out.print    -->
+        <encoder>
+            <pattern>%green(%d{HH:mm:ss}) %magenta([%thread]) %highlight(%-5level) %yellow(%logger{15}.%M - %msg%n)
+            </pattern>
+            <!-- %msg – outputs the actual log message. %n – line break.-->
+        </encoder>
+    </appender>
+
+    <!-- To Log File -->
+    <appender name="SAVE-TO-FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/spring-boot-logging.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{64}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Rollover daily and when the file reaches 1 KiloBytes -->
+            <!-- When in fileNamePattern you specify a compression extension
+            as a suffix of the file as gz, zip, etc ...
+            the compression is automatic -->
+            <FileNamePattern>${LOG_PATH}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SAVE-TO-FILE"/>
+    </root>
+
+</configuration>

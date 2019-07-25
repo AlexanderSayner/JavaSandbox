@@ -61,8 +61,11 @@ public class ArticleController {
         ArticleDTO articleDTO = articleMapper.toArticleDTO(article);
         Article transformed_article = articleMapper.toArticle(articleDTO);
 
+        logger.info(article.toString());
         System.out.println(article.toString());
+        logger.info(articleDTO.toString());
         System.out.println(articleDTO.toString());
+        logger.info(transformed_article.toString());
         System.out.println(transformed_article.toString());
 
         return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
