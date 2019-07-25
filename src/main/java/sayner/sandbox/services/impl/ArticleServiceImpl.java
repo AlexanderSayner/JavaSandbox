@@ -84,6 +84,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         // TESTING
         this.articleRepoHibernate.ArticleSoftDeleteMethod();
+        this.articleRepoHibernate.OneMoreCheck();
         // TESTING
 
         // сюда потом начнут складываться объекты из базы

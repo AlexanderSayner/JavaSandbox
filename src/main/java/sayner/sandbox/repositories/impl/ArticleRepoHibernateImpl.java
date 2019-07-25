@@ -95,7 +95,14 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         // Push an entity to the context
         entityManager.persist(article);
+        if (article != null) {
+            logger.info("=== Article is not null ===");
+        } else {
+            logger.info("=== Article is null ===");
+        }
         entityManager.flush();
+
+        // Теперь у article другое имя
 
         logger.info("=== Now an article in the persistent context===");
         logger.info("=== " + article.getState() + " ===");
@@ -114,6 +121,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         // NamedQuery is annotated in the model class
         TypedQuery<Article> articleTypedQuery = entityManager.createNamedQuery("Article.FindByName", Article.class);
         articleTypedQuery.setParameter("name", "Кефир");
+
+        // По имени, ясн-понятно ничего не найдёт с таким id
 
         try {
 
@@ -158,18 +167,20 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         entityManager.remove(article);
         entityManager.flush();
 
+        //==========================================================================
+
+        // id-то не менялся, поэтому должен выдать с новым именем
 
         logger.info("=== An Article is really deleted now ===");
         logger.info("=== " + article.getState() + " ===");
 
         Article artcl = entityManager.find(Article.class, article.getId());
         if (artcl == null) {
-            logger.info("=== Результат, article = null, id = " + article.getId());
+            logger.info("=== Результат, article = null");
         } else {
             logger.error("=== Результат: article != null, id = " + article.getId());
+            logger.info("=== Articles name: " + artcl.getName() + " ===");
         }
-
-        logger.info("=== Articles name: " + artcl.getName() + " ===");
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -179,17 +190,139 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        article = entityManager.find(Article.class, article.getId());
-        if (article == null) {
-            logger.info("=== article не найден " + article.getId());
-        } else {
+        // По id найдёт легко
+
+        try {
+
+            article = entityManager.find(Article.class, article.getId());
+
             logger.info("=== article найден, state = " + article.getState());
+        } catch (NullPointerException npe) {
+
+            logger.info("=== article не найден ===");
+        } finally {
+
+            logger.info("=== Операция по поиску удалённого объекта завершена ===");
         }
 
         entityManager.getTransaction().commit();
         entityManager.close();
     }
 
+    /**
+     *
+     */
+    public void OneMoreCheck() {
+
+        logger.info("\n");
+        logger.info("=================================================");
+        logger.info("=== Persistent context check has been started ===");
+        logger.info("=================================================");
+        logger.info("\n");
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Creating entity manager ===");
+        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+        logger.info("=== Opening a transaction ===");
+        entityManager.getTransaction().begin();
+
+        logger.info("=== Creating an experimental entity ===");
+        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh");
+
+        logger.info("=== Push it into the context ===");
+        entityManager.persist(article);
+        entityManager.flush();
+
+        logger.info("=== Commit transaction ===");
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Creating new entity manager ===");
+        entityManager = this.entityManagerFactory.createEntityManager();
+        logger.info("=== Opening a transaction ===");
+        entityManager.getTransaction().begin();
+
+        logger.info("=== Find entity by id ===");
+        Article founded_article = entityManager.find(Article.class, article.getId());
+
+        if (founded_article == null) {
+            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+        } else {
+            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+        }
+
+        logger.info("=== Commit transaction ===");
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Creating entity manager ===");
+        entityManager = this.entityManagerFactory.createEntityManager();
+        logger.info("=== Opening a transaction ===");
+        entityManager.getTransaction().begin();
+
+        logger.info("=== Now change name of the article entity and repeat the experiment");
+        article.setName("Lab rabbit");
+        logger.info("=== This doesn't change anything ===");
+
+        logger.info("=== Trying to merge entity ===");
+        // Если попытаться сделать persist, то всё упадёт с ошибкой org.springframework.dao.InvalidDataAccessApiUsageException
+        // После вызова entityManager.close() сущность перешла в состояние detached
+        // persist создаёт новую, для него неприемлимо существование id
+        // merge переводит сущность из состояния detached в persist, и все изменения синхронизируются с базой
+        entityManager.merge(article);
+        logger.info("=== Let's see on what it affected ===");
+        entityManager.flush();
+        logger.info("=== And it really works ===");
+
+        // One more experiment inside
+        //**************************
+        logger.info("=== Trying to change persistent entity ===");
+        article.setName("How does the persistent update work?");
+        logger.info("=== No any effect ===");
+
+        entityManager.flush();
+        logger.info("=== No any effect again===");
+
+        entityManager.merge(article);
+        logger.info("=== But now only merge works brilliant ===");
+        //**************************
+
+        logger.info("=== Find entity by id ===");
+        founded_article = null;
+        founded_article = entityManager.find(Article.class, article.getId());
+
+        if (founded_article == null) {
+            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+        } else {
+            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+        }
+
+
+        logger.info("=== Commit transaction ===");
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        logger.info("=== Finished ===");
+    }
+
+    /**
+     *
+     *
+     *
+     */
     public void addEntitiesToTheDatabase() {
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
