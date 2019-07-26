@@ -1,5 +1,6 @@
 package sayner.sandbox.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,7 +56,7 @@ public class BranchShop {
     private String name;
 
     // mappedBy = "НАЗВАНИЕ_ПОЛЯ_В_ДРУГОЙ_СУЩНОСТИ_С_КОТОРЫМ_БУДЕТ_СВЯЗАНО_ДАННОЕ_ПОЛЕ"
-    @OneToMany(mappedBy = "branchShop", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "branchShop", fetch = FetchType.LAZY)
     private Set<TradeDepartment> tradeDepartments;
 
     public BranchShop(String region, String city, String street, String name) {
@@ -66,4 +67,8 @@ public class BranchShop {
         this.setName(name);
     }
 
+    @JsonIgnore // to avoid an error: Could not write JSON: failed to lazily initialize a collection of role
+    public Set<TradeDepartment> getTradeDepartments() {
+        return this.getTradeDepartments();
+    }
 }

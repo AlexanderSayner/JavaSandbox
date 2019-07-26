@@ -40,7 +40,7 @@ public class BranchShopServiceImpl implements BranchShopService {
         if (branchShopCollection == null) {
             log.error("====== branchShopCollection IS NULL !!! =======");
         } else {
-            log.error("====== branchShopCollection is NOT NULL ======");
+            log.info("====== branchShopCollection is NOT NULL ======");
         }
 
         if (branchShopCollection instanceof List) {
