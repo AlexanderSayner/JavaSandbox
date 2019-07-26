@@ -58,7 +58,6 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         return branchShopCollection;
     }
 
-    @Override
     public BranchShop getShopById(int id) {
 
         Session session = this.sessionFactory.openSession();
@@ -77,7 +76,23 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
 
     @Override
     public BranchShop addOneShop(BranchShop shop) {
-        return null;
+
+        log.info("==== ShopsRepoHibernateImpl.addOneShop(" + BranchShop.class + ") ====");
+        log.info("=== Open the session ===");
+        Session session = this.sessionFactory.openSession();
+        log.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        log.info("=== Persist a shop ===");
+        session.persist(shop);
+        session.flush();
+
+        log.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+        log.info("=== Closing session ===");
+        session.close();
+
+        return shop;
     }
 
     @Override
@@ -88,5 +103,29 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
     @Override
     public BranchShop deleteOneShop(BranchShop shop) {
         return null;
+    }
+
+    public void addEntitiesToTheDatabase() {
+        log.info("==== Adding lots of shops in DB ====");
+        log.info("=== Open the session ===");
+        Session session = this.sessionFactory.openSession();
+        log.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        int counter = 1000;
+        while (--counter > 0) {
+
+            BranchShop branchShop = new BranchShop("Volga region", "Ulyanovsk", "aw_street" + counter % 13, "name-" + counter);
+
+            session.persist(branchShop);
+            session.flush();
+        }
+
+        log.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+        log.info("=== Closing session ===");
+        session.close();
+
+        log.info("=== From shops repo: all shops have been added to the database");
     }
 }

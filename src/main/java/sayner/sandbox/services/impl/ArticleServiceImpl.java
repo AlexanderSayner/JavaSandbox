@@ -75,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Transactional(
             rollbackFor = Exception.class,
-            isolation = Isolation.REPEATABLE_READ,
+            isolation = Isolation.READ_UNCOMMITTED,
             propagation = Propagation.REQUIRED
     )
     public List<Article> getAllArticles() {

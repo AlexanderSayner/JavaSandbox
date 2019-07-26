@@ -55,7 +55,15 @@ public class BranchShop {
     private String name;
 
     // mappedBy = "НАЗВАНИЕ_ПОЛЯ_В_ДРУГОЙ_СУЩНОСТИ_С_КОТОРЫМ_БУДЕТ_СВЯЗАНО_ДАННОЕ_ПОЛЕ"
-    @OneToMany(mappedBy = "branchShop", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branchShop", fetch = FetchType.EAGER)
     private Set<TradeDepartment> tradeDepartments;
+
+    public BranchShop(String region, String city, String street, String name) {
+
+        this.setRegion(region);
+        this.setCity(city);
+        this.setStreet(street);
+        this.setName(name);
+    }
 
 }

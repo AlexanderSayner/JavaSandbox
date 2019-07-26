@@ -18,4 +18,6 @@ public interface ShopsRepoHibernate {
 
     // must return deleted
     BranchShop deleteOneShop(BranchShop shop);
+
+    void addEntitiesToTheDatabase();
 }

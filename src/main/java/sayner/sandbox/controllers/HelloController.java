@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sayner.sandbox.jsontemplate.ModelResponse;
+import sayner.sandbox.services.BranchShopService;
 import sayner.sandbox.services.impl.ArticleServiceImpl;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class HelloController {
     private ModelResponse modelResponse;
     @Autowired
     private ArticleServiceImpl articleService;
+    @Autowired
+    private BranchShopService branchShopService;
 
     @RequestMapping("/hello")
     public String sayHi() {
@@ -32,7 +35,12 @@ public class HelloController {
 
         log.info("=== Starting to fill the database ===");
 
-        articleService.fillTheDatabase();
+        Thread articleThread = new Thread(() -> articleService.fillTheDatabase());
+        Thread shopsThread = new Thread(() -> branchShopService.fillTheDatabase());
+
+        // Создаём побочные потоки и наслаждаемся быстрым откликом приложения
+        articleThread.start();
+        shopsThread.start();
 
         log.info("=== Entities have added to the database ===");
 

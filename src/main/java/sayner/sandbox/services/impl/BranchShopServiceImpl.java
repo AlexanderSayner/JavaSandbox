@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import sayner.sandbox.models.BranchShop;
 import sayner.sandbox.repositories.ShopsRepoHibernate;
 import sayner.sandbox.services.BranchShopService;
@@ -28,6 +31,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @return
      */
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRES_NEW)
     public List<BranchShop> getAllShops() {
 
         List<BranchShop> shops;
@@ -56,6 +60,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      * @param id
      * @return
      */
+    @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRES_NEW)
     public BranchShop getOneById(int id) {
 
         return shopsRepoHibernate.getShopById(id);
@@ -66,6 +71,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
     public BranchShop addShop(BranchShop shop) {
 
         return shopsRepoHibernate.addOneShop(shop);
@@ -76,6 +82,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public BranchShop updateShop(BranchShop shop) {
 
         return shopsRepoHibernate.updateShop(shop);
@@ -86,9 +93,14 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public BranchShop deleteShop(BranchShop shop) {
 
         return shopsRepoHibernate.deleteOneShop(shop);
     }
 
+    @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
+    public void fillTheDatabase() {
+        this.shopsRepoHibernate.addEntitiesToTheDatabase();
+    }
 }

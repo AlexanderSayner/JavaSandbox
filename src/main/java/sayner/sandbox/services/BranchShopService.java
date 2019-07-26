@@ -15,4 +15,6 @@ public interface BranchShopService {
     BranchShop updateShop(BranchShop shop);
 
     BranchShop deleteShop(BranchShop shop);
+
+    void fillTheDatabase();
 }

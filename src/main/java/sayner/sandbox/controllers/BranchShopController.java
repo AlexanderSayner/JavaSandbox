@@ -45,7 +45,7 @@ public class BranchShopController {
      *
      * @param shop
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/shops")
+    @PostMapping
     public void addShop(@RequestBody BranchShop shop) {
 
         branchShopService.addShop(shop);
