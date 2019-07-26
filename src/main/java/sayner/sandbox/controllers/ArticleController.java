@@ -1,8 +1,7 @@
 package sayner.sandbox.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,8 +27,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/articles")
+@Log4j2
 public class ArticleController {
-
 
     @Autowired
     private ArticleServiceImpl articleService;
@@ -46,26 +45,23 @@ public class ArticleController {
     //@JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getAllArticlesTest() throws IOException {
 
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
-        logger.debug("This is an {} message.", "info");
-        logger.info("This is an info message");
-        logger.error("This is an error message");
+        log.debug("This is an {} message.", "info");
+        log.info("This is an info message");
+        log.error("This is an error message");
 
         articleService.method1();
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        Article article = new Article(1, "df", "ag", "dsf", 13, "hai");
+        Article article = new Article("df", "ag", "dsf", 13, "hai");
         ArticleDTO articleDTO = articleMapper.toArticleDTO(article);
         Article transformed_article = articleMapper.toArticle(articleDTO);
 
-        logger.info(article.toString());
+        log.info(article.toString());
         System.out.println(article.toString());
-        logger.info(articleDTO.toString());
+        log.info(articleDTO.toString());
         System.out.println(articleDTO.toString());
-        logger.info(transformed_article.toString());
+        log.info(transformed_article.toString());
         System.out.println(transformed_article.toString());
 
         return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);

@@ -2,11 +2,14 @@ package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.models.enums.ArticleState;
 
@@ -27,10 +30,10 @@ import java.util.Objects;
 // By default: @SQLDelete(sql = "DELETE from Articles_List WHERE id = ?", check = ResultCheckStyle.COUNT)
 @NamedQuery(name = "Article.FindByName", query = "from Article a WHERE a.name like :name")
 @Table(name = "Articles_List")
+@NoArgsConstructor
+@AllArgsConstructor
+@Log4j2
 public class Article {
-
-    @Transient
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Индентификатор БД
@@ -39,10 +42,14 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     @JsonView(ArticleView.Id.class)
-    private int id;
+    @Getter
+    @Setter // if entity is from database, i would set its value
+    private Integer id;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Getter
+    @Setter
     private ArticleState state;
 
     /**
@@ -50,6 +57,8 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.IdTitle.class)
+    @Getter
+    @Setter
     private String title;
 
     /**
@@ -57,6 +66,8 @@ public class Article {
      */
     @Column
     @JsonView({ArticleView.IdTitleManufacturer.class, ArticleView.Id.class})
+    @Getter
+    @Setter
     private String manufacturer;
 
     /**
@@ -64,6 +75,8 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @Getter
+    @Setter
     private String name;
 
     /**
@@ -71,118 +84,38 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.FullArticle.class)
-    private double mass_si;
+    @Getter
+    @Setter
+    private Double mass_si;
 
     /**
      * Гарантия
      */
     @Column
     @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
+    @Getter
+    @Setter
     private String garantee;
 
     @Column(updatable = false, name = "creation_date_time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
     @JsonView(ArticleView.IdTitleDate.class)
+    @Getter
+    @Setter // if entity is from database, i would set its value
     private LocalDateTime creationDateTime;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
+    @Getter
+    @Setter
     private LocalDateTime updatedAt;
 
     /**
-     * getter'ы & setter'ы
+     * extended getter'ы & setter'ы
      */
-    // Сначала getter'ы
-    public int getId() {
-        return id;
-    }
 
     public String getStringId() {
         return String.valueOf(getId());
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getMass_si() {
-        return mass_si;
-    }
-
-    public String getGarantee() {
-        return garantee;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    // Теперь setter'ы
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMass_si(double mass_si) {
-        this.mass_si = mass_si;
-    }
-
-    public void setGarantee(String garantee) {
-        this.garantee = garantee;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public ArticleState getState() {
-        return state;
-    }
-
-    public void setState(ArticleState state) {
-        this.state = state;
-    }
-
-    @PreRemove
-    public void deleteAnArticle() {
-        logger.info("Set to state DELETED");
-        this.setState(ArticleState.DELETED);
-    }
-
-    /**
-     * Default конструктор
-     */
-    public Article() {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.trace("Конструктор без аргументов класса {}", Article.class);
     }
 
     /**
@@ -195,7 +128,7 @@ public class Article {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = title + "_" + manufacturer;
-        this.mass_si = 1;
+        this.mass_si = 1d;
         this.garantee = "нет";
     }
 
@@ -218,25 +151,24 @@ public class Article {
     }
 
     /**
-     * Устанавливает вообще всё. Очень нужен был
-     *
-     * @param id
-     * @param title
-     * @param manufacturer
-     * @param name
-     * @param mass_si
-     * @param garantee
+     * logic
      */
-    public Article(int id, String title, String manufacturer, String name, double mass_si, String garantee) {
-        this.id = id;
-        this.title = title;
-        this.manufacturer = manufacturer;
-        this.name = name;
-        this.mass_si = mass_si;
-        this.garantee = garantee;
+
+    @PreRemove
+    public void deleteAnArticle() {
+        log.info("Set to state DELETED");
+        this.setState(ArticleState.DELETED);
     }
 
+    /**
+     * Overrides
+     */
 
+    /**
+     * Возращает основные поля
+     *
+     * @return
+     */
     @Override
     public String toString() {
 
@@ -262,6 +194,12 @@ public class Article {
         );
     }
 
+    /**
+     * Осталось с датой решить
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)

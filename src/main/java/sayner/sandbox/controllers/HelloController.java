@@ -1,23 +1,20 @@
 package sayner.sandbox.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sayner.sandbox.dto.ArticleDTO;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.services.impl.ArticleServiceImpl;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/")
+@Log4j2
 public class HelloController {
 
     @Autowired
@@ -33,12 +30,11 @@ public class HelloController {
     @GetMapping
     public ResponseEntity<Object> fillTheDatabase() throws IOException {
 
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.info("=== Starting to fill the database ===");
+        log.info("=== Starting to fill the database ===");
 
         articleService.fillTheDatabase();
 
-        logger.info("=== Entities have added to the database ===");
+        log.info("=== Entities have added to the database ===");
 
         class DtoClassWithData {
             private String status;
