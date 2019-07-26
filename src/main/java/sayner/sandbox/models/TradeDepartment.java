@@ -35,4 +35,8 @@ public class TradeDepartment {
     @Column
     private String appointment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_Branch_shops", nullable = false)
+    private BranchShop branchShop;
+
 }

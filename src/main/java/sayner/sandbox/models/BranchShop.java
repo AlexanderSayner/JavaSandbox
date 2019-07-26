@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Класс представляет собой филиал магазина
@@ -52,5 +53,9 @@ public class BranchShop {
      */
     @Column
     private String name;
+
+    // mappedBy = "НАЗВАНИЕ_ПОЛЯ_В_ДРУГОЙ_СУЩНОСТИ_С_КОТОРЫМ_БУДЕТ_СВЯЗАНО_ДАННОЕ_ПОЛЕ"
+    @OneToMany(mappedBy = "branchShop", fetch = FetchType.LAZY)
+    private Set<TradeDepartment> tradeDepartments;
 
 }

@@ -3,7 +3,7 @@ package sayner.sandbox.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sayner.sandbox.models.BranchShop;
-import sayner.sandbox.services.BranchShopService;
+import sayner.sandbox.services.impl.BranchShopServiceImpl;
 
 import java.util.List;
 
@@ -11,17 +11,18 @@ import java.util.List;
  * Управление магазинами
  */
 @RestController
+@RequestMapping("/shops")
 public class BranchShopController {
 
     @Autowired
-    public BranchShopService branchShopService;
+    public BranchShopServiceImpl branchShopService;
 
     /**
      * Отображает все магазины
      *
      * @return
      */
-    @RequestMapping("/shops")
+    @GetMapping
     public List<BranchShop> getAllShops() {
 
         return branchShopService.getAllShops();
@@ -33,7 +34,7 @@ public class BranchShopController {
      * @param id
      * @return
      */
-    @RequestMapping("/shops/{id}")
+    @GetMapping(value = "/{id}")
     public BranchShop getShop(@PathVariable int id) {
 
         return branchShopService.getOneById(id);
@@ -64,11 +65,11 @@ public class BranchShopController {
     /**
      * Удаляет по ай-дишнику
      *
-     * @param id
+     * @param shop
      */
     @RequestMapping(method = RequestMethod.DELETE, value = "shops/{id}")
-    public void deleteShop(@PathVariable int id) {
+    public void deleteShop(@RequestBody BranchShop shop) {
 
-        branchShopService.deleteShop(id);
+        branchShopService.deleteShop(shop);
     }
 }
