@@ -15,12 +15,16 @@ import sayner.sandbox.jsontemplate.ResponseHandler;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.services.impl.ArticleServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Управление каталогом
@@ -45,6 +49,10 @@ public class ArticleController {
     //@JsonView(ArticleView.IdTitleDate.class)
     public ResponseEntity<Object> getAllArticlesTest() throws IOException {
 
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
+
         log.debug("This is an {} message.", "info");
         log.info("This is an info message");
         log.error("This is an error message");
@@ -53,7 +61,7 @@ public class ArticleController {
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        Article article = new Article("df", "ag", "dsf", 13, "hai");
+        Article article = new Article("df", "ag", "dsf", 13, "hai", warehouses);
         ArticleDTO articleDTO = articleMapper.toArticleDTO(article);
         Article transformed_article = articleMapper.toArticle(articleDTO);
 
@@ -64,7 +72,11 @@ public class ArticleController {
         log.info(transformed_article.toString());
         System.out.println(transformed_article.toString());
 
+        List<Article> articleList = new ArrayList<>();
+        articleList.add(article);
+
         return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
+//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }
 
     /**

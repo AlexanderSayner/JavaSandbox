@@ -52,15 +52,24 @@ public class Warehouse {
     @Column
     private LocalDateTime expirationDate;
 
-//    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
-//    private Set<Article> articles;
-//
-//    /**
-//     * extended getter'ы & setter'ы
-//     */
-//
-//    @JsonIgnore
-//    public Set<Article> getArticles() {
-//        return this.articles;
-//    }
+    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    private Set<Article> articles;
+
+    /**
+     * Min contructor
+     *
+     * @param articles
+     */
+    public Warehouse(Set<Article> articles) {
+        this.articles = articles;
+    }
+
+    /**
+     * extended getter'ы & setter'ы
+     */
+
+    @JsonIgnore
+    public Set<Article> getArticles() {
+        return this.articles;
+    }
 }

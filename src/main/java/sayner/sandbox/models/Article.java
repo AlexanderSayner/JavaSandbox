@@ -95,14 +95,14 @@ public class Article {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-//
-//    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "Article_Warehouse",
-//            joinColumns = {@JoinColumn(name = "article_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
-//    )
-//    private Set<Warehouse> warehouses;
+
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "Article_Warehouse",
+            joinColumns = {@JoinColumn(name = "article_id")},
+            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+    )
+    private Set<Warehouse> warehouses;
 
     /**
      * extended getter'ы & setter'ы
@@ -112,10 +112,10 @@ public class Article {
         return String.valueOf(getId());
     }
 
-//    @JsonIgnore
-//    public Set<Warehouse> getWarehouses() {
-//        return this.warehouses;
-//    }
+    @JsonIgnore
+    public Set<Warehouse> getWarehouses() {
+        return this.warehouses;
+    }
 
     /**
      * Конструктор для ленивых
@@ -141,12 +141,13 @@ public class Article {
      * @param mass_si
      * @param garantee
      */
-    public Article(String title, String manufacturer, String name, double mass_si, String garantee) {
+    public Article(String title, String manufacturer, String name, double mass_si, String garantee, Set<Warehouse> warehouses) {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = name;
         this.mass_si = mass_si;
         this.garantee = garantee;
+        this.warehouses = warehouses;
     }
 
     /**

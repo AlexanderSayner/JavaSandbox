@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
 import sayner.sandbox.utils.HibernateSessionFactoryUtil;
 
@@ -15,7 +16,9 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Истольлование инструментоа Hibernate
@@ -85,21 +88,28 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         log.info("=== Article Soft Delete ===");
 
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
+
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope");
+        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope",warehouses);
 
         // Push an entity to the context
+        log.info("=== Persist an article ===");
         entityManager.persist(article);
+        log.info("=== Persist a warehouse ===");
+        entityManager.persist(warehouse);
+
+
         if (article != null) {
             log.info("=== Article is not null ===");
         } else {
             log.info("=== Article is null ===");
         }
         entityManager.flush();
-
-        // Теперь у article другое имя
 
         log.info("=== Now an article in the persistent context===");
         log.info("=== " + article.getState() + " ===");
@@ -217,6 +227,11 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         log.info("=================================================");
         log.info("\n");
 
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
+
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -226,10 +241,12 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         entityManager.getTransaction().begin();
 
         log.info("=== Creating an experimental entity ===");
-        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh");
+        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh", warehouses);
 
         log.info("=== Push it into the context ===");
         entityManager.persist(article);
+        log.info("=== Push many to many warehouses into the context ===");
+        entityManager.persist(warehouse);
         entityManager.flush();
 
         log.info("=== Commit transaction ===");
@@ -316,6 +333,9 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
     /**
      * Объявлять транзакцию нужно в сервисе, но здесь эксперимент
+     *
+     * В примере OneMoreCheck() merge спользовался для обновления данных сущности,
+     * в ThirdCheck() достаёт сущность из базы, поэтому merge(warehouse) обязателен
      */
     public void ThirdCheck() {
 
@@ -324,6 +344,10 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         log.info("=== Persistent context check has been started (Session Factory) ===");
         log.info("===================================================================");
         log.info("\n");
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -334,13 +358,14 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         session.beginTransaction();
 
         log.info("=== Creating an experimental entity ===");
-        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh");
+        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh", warehouses);
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         log.info("=== Push it into the context ===");
         session.persist(article);
+        session.persist(warehouse);
         session.flush();
 
         log.info("=== Find entity by id ===");
@@ -370,6 +395,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         article.setName("Session rabbit");
 
         log.info("=== Trying to merge entity ===");
+        session.merge(warehouse); // have to merge it too
         session.merge(article);
 
         log.info("=== Find entity by id ===");
@@ -402,12 +428,16 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
 
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
+
         int counter = 1000;
         while (--counter > 0) {
 
             entityManager.getTransaction().begin();
 
-            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope");
+            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope", warehouses);
 
             entityManager.persist(article);
             entityManager.flush();
