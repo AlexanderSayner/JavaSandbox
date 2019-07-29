@@ -45,10 +45,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         criteriaQuery.select(articleRoot);
         criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
-        session.createQuery(criteriaQuery)
-                .getResultList()
-                .forEach(article -> articleList.add(article))
-        ;
+        articleList = session.createQuery(criteriaQuery).getResultList();
 
         session.getTransaction().commit();
         session.close();
