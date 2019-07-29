@@ -16,8 +16,8 @@ import sayner.sandbox.repositories.ArticleRepoHibernate;
 @SpringBootTest
 public class RepositoryArticleTest {
 
-    @Autowired
-    private ArticleRepoHibernate articleRepoHibernate;
+//    @Autowired
+//    private ArticleRepoHibernate articleRepoHibernate;
 
     public RepositoryArticleTest() {
     }
@@ -29,11 +29,11 @@ public class RepositoryArticleTest {
         logger.info("TEST LOGGER RECORD");
     }
 
-    @Test
-    public void RepoTest() {
-
-        Article article = this.articleRepoHibernate.findById(1);
-        System.out.println(article.getId());
-    }
+//    @Test
+//    public void RepoTest() {
+//
+//        Article article = this.articleRepoHibernate.findById(1);
+//        System.out.println(article.getId());
+//    }
 
 }

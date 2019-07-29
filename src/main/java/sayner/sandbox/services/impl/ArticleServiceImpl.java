@@ -1,5 +1,6 @@
 package sayner.sandbox.services.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -13,22 +14,18 @@ import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.repositories.ArticleRepoHibernate;
 import sayner.sandbox.repositories.ArticleRepository;
-import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.specifications.ArticleSpecs;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class ArticleServiceImpl implements ArticleService {
 
@@ -36,14 +33,9 @@ public class ArticleServiceImpl implements ArticleService {
      * Подключение репозитория
      * Injects the ArticleRepository instance
      */
-    @Autowired
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
 
-    @Autowired
-    private ArticleRepoHibernateImpl articleRepoHibernate;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final ArticleRepoHibernate articleRepoHibernate;
 
     //
     // logic methods
@@ -52,20 +44,7 @@ public class ArticleServiceImpl implements ArticleService {
     @SenselessTransaction
     public List<Article> criterian(String filtered_by, String value) {
 
-        List<Article> articleList = new ArrayList<>();
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
-        Root<Article> articleRoot = criteriaQuery.from(Article.class);
-
-        criteriaQuery.select(articleRoot);
-        criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
-        entityManager.createQuery(criteriaQuery)
-                .getResultList()
-                .forEach(article -> articleList.add(article))
-        ;
-
-        return articleList;
+        return this.articleRepoHibernate.filterFlexibility(filtered_by, value);
     }
 
     /**

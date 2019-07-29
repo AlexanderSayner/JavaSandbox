@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-// @__ is especially for javac 7 (why not)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class BranchShopServiceImpl implements BranchShopService {

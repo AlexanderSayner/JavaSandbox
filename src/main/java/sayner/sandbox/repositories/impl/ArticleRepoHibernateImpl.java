@@ -16,6 +16,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,31 @@ import java.util.Set;
 public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
     private final EntityManagerFactory entityManagerFactory;
+
+    @Override
+    public List<Article> filterFlexibility(String filtered_by, String value) {
+
+        List<Article> articleList = new ArrayList<>();
+
+        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        session.getTransaction().begin();
+
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
+        Root<Article> articleRoot = criteriaQuery.from(Article.class);
+
+        criteriaQuery.select(articleRoot);
+        criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
+        session.createQuery(criteriaQuery)
+                .getResultList()
+                .forEach(article -> articleList.add(article))
+        ;
+
+        session.getTransaction().commit();
+        session.close();
+
+        return articleList;
+    }
 
     @Override
     public Article findById(int id) {
@@ -99,6 +125,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     /**
      * Сделано в одном методе для пущей наглядности
      */
+    @Override
     public void ArticleSoftDeleteMethod() {
 
         log.info("=== Article Soft Delete ===");
@@ -234,6 +261,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     /**
      *
      */
+    @Override
     public void OneMoreCheck() {
 
         log.info("\n");
@@ -352,6 +380,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      * В примере OneMoreCheck() merge спользовался для обновления данных сущности,
      * в ThirdCheck() достаёт сущность из базы, поэтому merge(warehouse) обязателен
      */
+    @Override
     public void ThirdCheck() {
 
         log.info("\n");
@@ -440,6 +469,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     /**
      *
      */
+    @Override
     public void addEntitiesToTheDatabase() {
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
