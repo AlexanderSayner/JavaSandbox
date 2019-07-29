@@ -1,7 +1,6 @@
 package sayner.sandbox.services.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,9 +29,8 @@ import java.util.NoSuchElementException;
 
 
 @Service
+@Log4j2
 public class ArticleServiceImpl implements ArticleService {
-
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Подключение репозитория
@@ -77,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Transactional(
             rollbackFor = Exception.class,
-            isolation = Isolation.REPEATABLE_READ,
+            isolation = Isolation.READ_UNCOMMITTED,
             propagation = Propagation.REQUIRED
     )
     public List<Article> getAllArticles() {
@@ -310,8 +308,8 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.findNativeAll();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
-    public void fillTheDatabase(){
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void fillTheDatabase() {
         this.articleRepoHibernate.addEntitiesToTheDatabase();
     }
 }

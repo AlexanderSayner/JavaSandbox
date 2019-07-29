@@ -1,17 +1,15 @@
 package sayner.sandbox.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
 import sayner.sandbox.utils.HibernateSessionFactoryUtil;
 
@@ -19,25 +17,26 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Истольлование инструментоа Hibernate
  */
 @Repository
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Override
     public Article findById(int id) {
 
         Article article = HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Article.class, id);
         if (article == null) {
-            logger.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
+            log.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
             throw new ThereIsNoSuchArticleException();
         }
         return article;
@@ -88,32 +87,39 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      */
     public void ArticleSoftDeleteMethod() {
 
-        logger.info("=== Article Soft Delete ===");
+        log.info("=== Article Soft Delete ===");
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope");
+        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope", warehouses);
 
         // Push an entity to the context
+        log.info("=== Persist an article ===");
         entityManager.persist(article);
+        log.info("=== Persist a warehouse ===");
+        entityManager.persist(warehouse);
+
+
         if (article != null) {
-            logger.info("=== Article is not null ===");
+            log.info("=== Article is not null ===");
         } else {
-            logger.info("=== Article is null ===");
+            log.info("=== Article is null ===");
         }
         entityManager.flush();
 
-        // Теперь у article другое имя
-
-        logger.info("=== Now an article in the persistent context===");
-        logger.info("=== " + article.getState() + " ===");
+        log.info("=== Now an article in the persistent context===");
+        log.info("=== " + article.getState() + " ===");
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        logger.info("=== Article in the Database ===");
-        logger.info("=== And Article can be read ===");
+        log.info("=== Article in the Database ===");
+        log.info("=== And Article can be read ===");
 
         //==========================================================================================
 
@@ -130,7 +136,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
             int counter = 0;
             List<Article> articleList = articleTypedQuery.getResultList();
-            logger.info("=== articleList.isEmpty(): " + articleList.isEmpty() + " ===");
+            log.info("=== articleList.isEmpty(): " + articleList.isEmpty() + " ===");
 
             if (articleList.isEmpty()) {
                 throw new ThereIsNoSuchArticleException();
@@ -139,32 +145,32 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
             for (Article ar :
                     articleList) {
                 article = ar;
-                logger.info("id is " + article.getId() + " | name is " + article.getName() + " | state is " + article.getState());
+                log.info("id is " + article.getId() + " | name is " + article.getName() + " | state is " + article.getState());
                 counter++;
             }
 
-            logger.info("=== Article is got by name-filter ===");
-            logger.info("=== counter: " + counter + " ===");
+            log.info("=== Article is got by name-filter ===");
+            log.info("=== counter: " + counter + " ===");
 
         } catch (NoResultException nre) {
 
-            logger.error("Article: NoResultException | message: " + nre.getMessage());
-            logger.info("Article is not found by name-filter");
+            log.error("Article: NoResultException | message: " + nre.getMessage());
+            log.info("Article is not found by name-filter");
             article = new Article();
 
         } catch (NonUniqueResultException nure) {
 
-            logger.error("Article: NonUniqueResultException | message: " + nure.getMessage());
+            log.error("Article: NonUniqueResultException | message: " + nure.getMessage());
             article = new Article();
         } catch (ThereIsNoSuchArticleException tinsae) {
 
-            logger.error("Article: ThereIsNoSuchArticleException | message: " + tinsae.getMessage());
+            log.error("Article: ThereIsNoSuchArticleException | message: " + tinsae.getMessage());
             article = new Article();
         }
 
-        logger.info("=== An Article is read ===");
-        logger.info("=== " + article.getState() + " ===");
-        logger.info("=== Articles name: " + article.getName() + " ===");
+        log.info("=== An Article is read ===");
+        log.info("=== " + article.getState() + " ===");
+        log.info("=== Articles name: " + article.getName() + " ===");
 
         entityManager.remove(article);
         entityManager.flush();
@@ -173,15 +179,15 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         // id-то не менялся, поэтому должен выдать с новым именем
 
-        logger.info("=== An Article is really deleted now ===");
-        logger.info("=== " + article.getState() + " ===");
+        log.info("=== An Article is really deleted now ===");
+        log.info("=== " + article.getState() + " ===");
 
         Article artcl = entityManager.find(Article.class, article.getId());
         if (artcl == null) {
-            logger.info("=== Результат, article = null");
+            log.info("=== Результат, article = null");
         } else {
-            logger.error("=== Результат: article != null, id = " + article.getId());
-            logger.info("=== Articles name: " + artcl.getName() + " ===");
+            log.error("=== Результат: article != null, id = " + article.getId());
+            log.info("=== Articles name: " + artcl.getName() + " ===");
         }
 
         entityManager.getTransaction().commit();
@@ -198,13 +204,13 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
             article = entityManager.find(Article.class, article.getId());
 
-            logger.info("=== article найден, state = " + article.getState());
+            log.info("=== article найден, state = " + article.getState());
         } catch (NullPointerException npe) {
 
-            logger.info("=== article не найден ===");
+            log.info("=== article не найден ===");
         } finally {
 
-            logger.info("=== Операция по поиску удалённого объекта завершена ===");
+            log.info("=== Операция по поиску удалённого объекта завершена ===");
         }
 
         entityManager.getTransaction().commit();
@@ -216,188 +222,205 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      */
     public void OneMoreCheck() {
 
-        logger.info("\n");
-        logger.info("=================================================");
-        logger.info("=== Persistent context check has been started ===");
-        logger.info("=================================================");
-        logger.info("\n");
+        log.info("\n");
+        log.info("=================================================");
+        log.info("=== Persistent context check has been started ===");
+        log.info("=================================================");
+        log.info("\n");
+
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Creating entity manager ===");
+        log.info("=== Creating entity manager ===");
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
-        logger.info("=== Opening a transaction ===");
+        log.info("=== Opening a transaction ===");
         entityManager.getTransaction().begin();
 
-        logger.info("=== Creating an experimental entity ===");
-        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh");
+        log.info("=== Creating an experimental entity ===");
+        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh", warehouses);
 
-        logger.info("=== Push it into the context ===");
+        log.info("=== Push it into the context ===");
         entityManager.persist(article);
+        log.info("=== Push many to many warehouses into the context ===");
+        entityManager.persist(warehouse);
         entityManager.flush();
 
-        logger.info("=== Commit transaction ===");
+        log.info("=== Commit transaction ===");
         entityManager.getTransaction().commit();
         entityManager.close();
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Creating new entity manager ===");
+        log.info("=== Creating new entity manager ===");
         entityManager = this.entityManagerFactory.createEntityManager();
-        logger.info("=== Opening a transaction ===");
+        log.info("=== Opening a transaction ===");
         entityManager.getTransaction().begin();
 
-        logger.info("=== Find entity by id ===");
+        log.info("=== Find entity by id ===");
         Article founded_article = entityManager.find(Article.class, article.getId());
 
         if (founded_article == null) {
-            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+            log.info("=== Результат, article = null, id was " + article.getId() + " ===");
         } else {
-            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
-            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+            log.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            log.info("=== Articles name: " + founded_article.getName() + " ===");
         }
 
-        logger.info("=== Commit transaction ===");
+        log.info("=== Commit transaction ===");
         entityManager.getTransaction().commit();
         entityManager.close();
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Creating entity manager ===");
+        log.info("=== Creating entity manager ===");
         entityManager = this.entityManagerFactory.createEntityManager();
-        logger.info("=== Opening a transaction ===");
+        log.info("=== Opening a transaction ===");
         entityManager.getTransaction().begin();
 
-        logger.info("=== Now change name of the article entity and repeat the experiment");
+        log.info("=== Now change name of the article entity and repeat the experiment");
         article.setName("Lab rabbit");
-        logger.info("=== This doesn't change anything ===");
+        log.info("=== This doesn't change anything ===");
 
-        logger.info("=== Trying to merge entity ===");
+        log.info("=== Trying to merge entity ===");
         // Если попытаться сделать persist, то всё упадёт с ошибкой org.springframework.dao.InvalidDataAccessApiUsageException
         // После вызова entityManager.close() сущность перешла в состояние detached
         // persist создаёт новую, для него неприемлимо существование id
         // merge переводит сущность из состояния detached в persist, и все изменения синхронизируются с базой
         entityManager.merge(article);
-        logger.info("=== Let's see on what it affected ===");
+        log.info("=== Let's see on what it affected ===");
         entityManager.flush();
-        logger.info("=== And it really works ===");
+        log.info("=== And it really works ===");
 
         // One more experiment inside
         //**************************
-        logger.info("=== Trying to change persistent entity ===");
+        log.info("=== Trying to change persistent entity ===");
         article.setName("How does the persistent update work?");
-        logger.info("=== No any effect ===");
+        log.info("=== No any effect ===");
 
         entityManager.flush();
-        logger.info("=== No any effect again===");
+        log.info("=== No any effect again===");
 
         entityManager.merge(article);
-        logger.info("=== But now only merge works brilliant ===");
+        log.info("=== But now only merge works brilliant ===");
         //**************************
 
-        logger.info("=== Find entity by id ===");
+        log.info("=== Find entity by id ===");
         founded_article = entityManager.find(Article.class, article.getId());
 
         if (founded_article == null) {
-            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+            log.info("=== Результат, article = null, id was " + article.getId() + " ===");
         } else {
-            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
-            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+            log.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            log.info("=== Articles name: " + founded_article.getName() + " ===");
         }
 
 
-        logger.info("=== Commit transaction ===");
+        log.info("=== Commit transaction ===");
         entityManager.getTransaction().commit();
         entityManager.close();
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Finished ===");
+        log.info("=== Finished ===");
     }
 
     /**
      * Объявлять транзакцию нужно в сервисе, но здесь эксперимент
+     * <p>
+     * В примере OneMoreCheck() merge спользовался для обновления данных сущности,
+     * в ThirdCheck() достаёт сущность из базы, поэтому merge(warehouse) обязателен
      */
     public void ThirdCheck() {
 
-        logger.info("\n");
-        logger.info("===================================================================");
-        logger.info("=== Persistent context check has been started (Session Factory) ===");
-        logger.info("===================================================================");
-        logger.info("\n");
+        log.info("\n");
+        log.info("===================================================================");
+        log.info("=== Persistent context check has been started (Session Factory) ===");
+        log.info("===================================================================");
+        log.info("\n");
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Open the session ===");
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        logger.info("=== Begin transaction ===");
+        log.info("=== Open the session ===");
+        SessionFactory sessionFactory = this.entityManagerFactory.unwrap(SessionFactory.class);
+        Session session = sessionFactory.openSession();
+        log.info("=== Begin transaction ===");
         session.beginTransaction();
 
-        logger.info("=== Creating an experimental entity ===");
-        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh");
+        log.info("=== Creating an experimental entity ===");
+        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh", warehouses);
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Push it into the context ===");
+        log.info("=== Push it into the context ===");
+        session.persist(warehouse);
         session.persist(article);
         session.flush();
 
-        logger.info("=== Find entity by id ===");
+        log.info("=== Find entity by id ===");
         Article founded_article = session.find(Article.class, article.getId());
 
         if (founded_article == null) {
-            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+            log.info("=== Результат, article = null, id was " + article.getId() + " ===");
         } else {
-            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
-            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+            log.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            log.info("=== Articles name: " + founded_article.getName() + " ===");
         }
 
-        logger.info("=== Commit transaction ===");
+        log.info("=== Commit transaction ===");
         session.getTransaction().commit();
-        logger.info("=== Closing session ===");
+        log.info("=== Closing session ===");
         session.close();
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Open the session ===");
-        session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        logger.info("=== Begin transaction ===");
+        log.info("=== Open the session ===");
+        session = sessionFactory.openSession();
+        log.info("=== Begin transaction ===");
         session.beginTransaction();
 
-        logger.info("=== Now change name of the article entity and repeat the experiment");
+        log.info("=== Now change name of the article entity and repeat the experiment");
         article.setName("Session rabbit");
 
-        logger.info("=== Trying to merge entity ===");
+        log.info("=== Trying to merge entity ===");
+        session.merge(warehouse); // have to merge it too
         session.merge(article);
 
-        logger.info("=== Find entity by id ===");
+        log.info("=== Find entity by id ===");
         founded_article = session.find(Article.class, article.getId());
 
         if (founded_article == null) {
-            logger.info("=== Результат, article = null, id was " + article.getId() + " ===");
+            log.info("=== Результат, article = null, id was " + article.getId() + " ===");
         } else {
-            logger.error("=== Результат: article != null, id = " + article.getId() + " ===");
-            logger.info("=== Articles name: " + founded_article.getName() + " ===");
+            log.error("=== Результат: article != null, id = " + article.getId() + " ===");
+            log.info("=== Articles name: " + founded_article.getName() + " ===");
         }
 
-        logger.info("=== That's good, SessionFactory works well too ===");
+        log.info("=== That's good, SessionFactory works well too ===");
 
-        logger.info("=== Commit transaction ===");
+        log.info("=== Commit transaction ===");
         session.getTransaction().commit();
-        logger.info("=== Closing session ===");
+        log.info("=== Closing session ===");
         session.close();
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-        logger.info("=== Finished ===");
+        log.info("=== Finished ===");
     }
 
     /**
@@ -406,20 +429,27 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     public void addEntitiesToTheDatabase() {
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
+
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
 
         int counter = 1000;
         while (--counter > 0) {
 
-            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope");
+            entityManager.getTransaction().begin();
+
+            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope", warehouses);
 
             entityManager.persist(article);
             entityManager.flush();
+
+
+            entityManager.getTransaction().commit();
         }
 
-        entityManager.getTransaction().commit();
         entityManager.close();
 
-        logger.info("=== From repo: all articles have been added to the database");
+        log.info("=== From repo: all articles have been added to the database");
     }
 }
