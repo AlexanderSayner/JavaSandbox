@@ -58,6 +58,7 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         return branchShopCollection;
     }
 
+    @Override
     public BranchShop getShopById(int id) {
 
         Session session = this.sessionFactory.openSession();
@@ -105,24 +106,28 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         return null;
     }
 
+    @Override
     public void addEntitiesToTheDatabase() {
         log.info("==== Adding lots of shops in DB ====");
         log.info("=== Open the session ===");
         Session session = this.sessionFactory.openSession();
-        log.info("=== Begin transaction ===");
-        session.beginTransaction();
 
         int counter = 1000;
         while (--counter > 0) {
+
+            log.info("=== Begin transaction ===");
+            session.beginTransaction();
 
             BranchShop branchShop = new BranchShop("Volga region", "Ulyanovsk", "aw_street" + counter % 13, "name-" + counter);
 
             session.persist(branchShop);
             session.flush();
+
+
+            log.info("=== Commit transaction ===");
+            session.getTransaction().commit();
         }
 
-        log.info("=== Commit transaction ===");
-        session.getTransaction().commit();
         log.info("=== Closing session ===");
         session.close();
 

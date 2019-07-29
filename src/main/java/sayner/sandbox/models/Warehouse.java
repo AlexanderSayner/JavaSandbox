@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Класс представляет собой филиал птовар на склад
@@ -49,5 +50,8 @@ public class Warehouse {
      */
     @Column
     private LocalDateTime expirationDate;
+
+    @ManyToMany(mappedBy = "warehouses")
+    private Set<Article> articles;
 
 }

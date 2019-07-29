@@ -101,6 +101,7 @@ public class BranchShopServiceImpl implements BranchShopService {
 
     @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
     public void fillTheDatabase() {
-        this.shopsRepoHibernate.addEntitiesToTheDatabase();
+        this.shopsRepoHibernate.
+                addEntitiesToTheDatabase();
     }
 }

@@ -16,6 +16,7 @@ import sayner.sandbox.models.enums.ArticleState;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Класс представляет собой каталог
@@ -109,6 +110,14 @@ public class Article {
     @Getter
     @Setter
     private LocalDateTime updatedAt;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Article_Warehouse",
+            joinColumns = {@JoinColumn(name = "article_id")},
+            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+    )
+    private Set<Warehouse> warehouses;
 
     /**
      * extended getter'ы & setter'ы

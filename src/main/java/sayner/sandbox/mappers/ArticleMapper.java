@@ -17,12 +17,13 @@ public interface ArticleMapper {
 
     /**
      * target is that is returning, source - that is getting
+     *
      * @param article
      * @return
      */
     @Mappings({
-            @Mapping(source = "name",target = "full_name"),
-            @Mapping(source = "id",target = "serial_id")
+            @Mapping(source = "name", target = "full_name"),
+            @Mapping(source = "id", target = "serial_id")
     })
     ArticleDTO toArticleDTO(Article article);
 

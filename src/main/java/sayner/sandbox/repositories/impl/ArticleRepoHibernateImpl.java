@@ -401,18 +401,21 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     public void addEntitiesToTheDatabase() {
 
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
 
         int counter = 1000;
         while (--counter > 0) {
+
+            entityManager.getTransaction().begin();
 
             Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope");
 
             entityManager.persist(article);
             entityManager.flush();
+
+
+            entityManager.getTransaction().commit();
         }
 
-        entityManager.getTransaction().commit();
         entityManager.close();
 
         log.info("=== From repo: all articles have been added to the database");
