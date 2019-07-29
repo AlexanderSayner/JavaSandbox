@@ -29,6 +29,7 @@ public class Warehouse {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "warehouse_id")
     private Integer id;
 
     /**

@@ -1,5 +1,6 @@
 package sayner.sandbox.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -24,11 +25,11 @@ import java.util.Set;
  * Истольлование инструментоа Hibernate
  */
 @Repository
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
-    @Autowired
-    EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Override
     public Article findById(int id) {
@@ -95,7 +96,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope",warehouses);
+        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope", warehouses);
 
         // Push an entity to the context
         log.info("=== Persist an article ===");
@@ -333,7 +334,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
     /**
      * Объявлять транзакцию нужно в сервисе, но здесь эксперимент
-     *
+     * <p>
      * В примере OneMoreCheck() merge спользовался для обновления данных сущности,
      * в ThirdCheck() достаёт сущность из базы, поэтому merge(warehouse) обязателен
      */
@@ -353,7 +354,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         log.info("=== Open the session ===");
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        SessionFactory sessionFactory = this.entityManagerFactory.unwrap(SessionFactory.class);
+        Session session = sessionFactory.openSession();
         log.info("=== Begin transaction ===");
         session.beginTransaction();
 
@@ -364,8 +366,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         log.info("=== Push it into the context ===");
-        session.persist(article);
         session.persist(warehouse);
+        session.persist(article);
         session.flush();
 
         log.info("=== Find entity by id ===");
@@ -387,7 +389,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         log.info("=== Open the session ===");
-        session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         log.info("=== Begin transaction ===");
         session.beginTransaction();
 
