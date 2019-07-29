@@ -161,9 +161,35 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         log.info("=== Begin transaction ===");
         session.beginTransaction();
 
-        session.persist(shop);
+        // Order doesn't matter, but it is important to persist all entities in foreign keys
         session.persist(productDepartment);
         session.persist(department);
+        session.persist(shop);
+
+        log.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+
+        log.info("=== Closing session ===");
+        session.close();
+
+        log.info("=== Try to get it all from the db ===");
+        log.info("=== Open the session ===");
+        session = this.sessionFactory.openSession();
+
+        log.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        log.info("=== Trying to get shop ===");
+        shop = session.get(BranchShop.class, shop.getId());
+
+        log.info("=== Trying to get departments ===");
+        tradeDepartmentSet = shop.getTradeDepartments();
+
+        for (TradeDepartment tradeDepartment : tradeDepartmentSet) {
+
+            log.info("=== Id of the department is " + tradeDepartment.getId() + " ===");
+        }
+
 
         log.info("=== Commit transaction ===");
         session.getTransaction().commit();
