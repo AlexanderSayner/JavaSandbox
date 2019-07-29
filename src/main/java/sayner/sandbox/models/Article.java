@@ -1,6 +1,7 @@
 package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -94,14 +95,14 @@ public class Article {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            name = "Article_Warehouse",
-            joinColumns = {@JoinColumn(name = "article_id")},
-            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
-    )
-    private Set<Warehouse> warehouses;
+//
+//    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "Article_Warehouse",
+//            joinColumns = {@JoinColumn(name = "article_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+//    )
+//    private Set<Warehouse> warehouses;
 
     /**
      * extended getter'ы & setter'ы
@@ -110,6 +111,11 @@ public class Article {
     public String getStringId() {
         return String.valueOf(getId());
     }
+
+//    @JsonIgnore
+//    public Set<Warehouse> getWarehouses() {
+//        return this.warehouses;
+//    }
 
     /**
      * Конструктор для ленивых

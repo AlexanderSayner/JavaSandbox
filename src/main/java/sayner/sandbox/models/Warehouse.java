@@ -1,5 +1,6 @@
 package sayner.sandbox.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,7 +52,15 @@ public class Warehouse {
     @Column
     private LocalDateTime expirationDate;
 
-    @ManyToMany(mappedBy = "warehouses")
-    private Set<Article> articles;
-
+//    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+//    private Set<Article> articles;
+//
+//    /**
+//     * extended getter'ы & setter'ы
+//     */
+//
+//    @JsonIgnore
+//    public Set<Article> getArticles() {
+//        return this.articles;
+//    }
 }
