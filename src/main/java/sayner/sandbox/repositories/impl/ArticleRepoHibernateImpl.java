@@ -11,7 +11,6 @@ import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
-import sayner.sandbox.utils.HibernateSessionFactoryUtil;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -34,18 +33,29 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public Article findById(int id) {
 
-        Article article = HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Article.class, id);
+        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        session.getTransaction().begin();
+
+        Article article = session.get(Article.class, id);
+
         if (article == null) {
             log.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
+            session.getTransaction().rollback();
+            session.close();
             throw new ThereIsNoSuchArticleException();
         }
+
+        session.getTransaction().commit();
+        session.close();
+
         return article;
     }
 
     @Override
     public List<Article> findAllLikeNameOrderByTitleUsingCriteriaQuery(String name) {
 
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        session.getTransaction().begin();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
@@ -58,8 +68,12 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         Query<Article> articleQuery = session.createQuery(criteriaQuery);
 
-        return articleQuery.getResultList();
+        List<Article> articleList = articleQuery.getResultList();
 
+        session.getTransaction().commit();
+        session.close();
+
+        return articleList;
     }
 
     @Override
