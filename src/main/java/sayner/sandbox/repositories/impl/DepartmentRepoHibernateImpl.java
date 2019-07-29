@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sayner.sandbox.models.TradeDepartment;
 import sayner.sandbox.repositories.DepartmentRepoHibernate;
@@ -20,6 +21,7 @@ public class DepartmentRepoHibernateImpl implements DepartmentRepoHibernate {
 
     private final SessionFactory sessionFactory;
 
+    @Autowired
     public DepartmentRepoHibernateImpl(EntityManagerFactory entityManagerFactory) {
 
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);

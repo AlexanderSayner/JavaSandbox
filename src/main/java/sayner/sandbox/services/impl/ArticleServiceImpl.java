@@ -30,11 +30,13 @@ import java.util.NoSuchElementException;
 public class ArticleServiceImpl implements ArticleService {
 
     /**
-     * Подключение репозитория
-     * Injects the ArticleRepository instance
+     * Тёплый и ламповый способ
      */
     private final ArticleRepository articleRepository;
 
+    /**
+     * Хардкорный и беспощадный
+     */
     private final ArticleRepoHibernate articleRepoHibernate;
 
     //
