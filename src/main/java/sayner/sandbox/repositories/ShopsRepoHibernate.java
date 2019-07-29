@@ -20,4 +20,6 @@ public interface ShopsRepoHibernate {
     BranchShop deleteOneShop(BranchShop shop);
 
     void addEntitiesToTheDatabase();
+
+    void oneToManyCheckExample();
 }

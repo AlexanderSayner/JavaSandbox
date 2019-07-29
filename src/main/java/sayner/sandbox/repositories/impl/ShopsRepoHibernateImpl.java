@@ -7,6 +7,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sayner.sandbox.models.BranchShop;
+import sayner.sandbox.models.TradeDepartment;
 import sayner.sandbox.repositories.ShopsRepoHibernate;
 
 import javax.persistence.EntityManagerFactory;
@@ -14,6 +15,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository
 @Log4j2
@@ -132,5 +135,40 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         session.close();
 
         log.info("=== From shops repo: all shops have been added to the database");
+    }
+
+    @Override
+    public void oneToManyCheckExample() {
+
+        log.info("=== One to many example ===");
+
+        log.info("=== Creating entities ===");
+        BranchShop shop = new BranchShop("Volga region", "Ulyanovsk", "aw_street", "awesome");
+
+        TradeDepartment productDepartment = new TradeDepartment("Продуктовый", shop);
+        TradeDepartment department = new TradeDepartment("Ещё какой-то", shop);
+
+        log.info("=== Adding to the Set ===");
+        Set<TradeDepartment> tradeDepartmentSet = new HashSet<>();
+        tradeDepartmentSet.add(productDepartment);
+        tradeDepartmentSet.add(department);
+
+        shop.setTradeDepartments(tradeDepartmentSet);
+
+        log.info("=== Open the session ===");
+        Session session = this.sessionFactory.openSession();
+
+        log.info("=== Begin transaction ===");
+        session.beginTransaction();
+
+        session.persist(shop);
+        session.persist(productDepartment);
+        session.persist(department);
+
+        log.info("=== Commit transaction ===");
+        session.getTransaction().commit();
+
+        log.info("=== Closing session ===");
+        session.close();
     }
 }

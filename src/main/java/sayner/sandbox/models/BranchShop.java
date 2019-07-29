@@ -2,8 +2,9 @@ package sayner.sandbox.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.*;
@@ -18,7 +19,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "Branch_shops")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Log4j2
@@ -29,6 +31,7 @@ public class BranchShop {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "branch_shop_id")
     private Integer id;
 
     /**
@@ -69,6 +72,6 @@ public class BranchShop {
 
     @JsonIgnore // to avoid an error: Could not write JSON: failed to lazily initialize a collection of role
     public Set<TradeDepartment> getTradeDepartments() {
-        return this.getTradeDepartments();
+        return this.tradeDepartments;
     }
 }

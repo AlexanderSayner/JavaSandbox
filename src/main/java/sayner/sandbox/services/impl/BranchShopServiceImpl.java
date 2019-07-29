@@ -31,8 +31,13 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRES_NEW)
     public List<BranchShop> getAllShops() {
+
+        //TESTING
+        this.shopsRepoHibernate.oneToManyCheckExample();
+        //TESTING
 
         List<BranchShop> shops;
         Collection<BranchShop> branchShopCollection = shopsRepoHibernate.getAllShops();
@@ -60,6 +65,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      * @param id
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRES_NEW)
     public BranchShop getOneById(int id) {
 
@@ -71,6 +77,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Override
     @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRES_NEW)
     public BranchShop addShop(BranchShop shop) {
 
@@ -82,6 +89,7 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public BranchShop updateShop(BranchShop shop) {
 
@@ -93,12 +101,14 @@ public class BranchShopServiceImpl implements BranchShopService {
      *
      * @param shop
      */
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public BranchShop deleteShop(BranchShop shop) {
 
         return shopsRepoHibernate.deleteOneShop(shop);
     }
 
+    @Override
     @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
     public void fillTheDatabase() {
         this.shopsRepoHibernate.

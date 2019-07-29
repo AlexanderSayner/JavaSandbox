@@ -1,8 +1,9 @@
 package sayner.sandbox.models;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.persistence.*;
@@ -16,7 +17,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Trade_Departments")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Log4j2
@@ -27,6 +29,7 @@ public class TradeDepartment {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trade_department_id")
     private Integer id;
 
     /**
@@ -36,7 +39,12 @@ public class TradeDepartment {
     private String appointment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_Branch_shops", nullable = false)
+    @JoinColumn(name = "branch_shop_id")
     private BranchShop branchShop;
+
+    public TradeDepartment(String appointment, BranchShop branchShop) {
+        this.appointment = appointment;
+        this.branchShop = branchShop;
+    }
 
 }

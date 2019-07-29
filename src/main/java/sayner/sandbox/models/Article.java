@@ -31,6 +31,8 @@ import java.util.Set;
 // By default: @SQLDelete(sql = "DELETE from Articles_List WHERE id = ?", check = ResultCheckStyle.COUNT)
 @NamedQuery(name = "Article.FindByName", query = "from Article a WHERE a.name like :name")
 @Table(name = "Articles_List")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Log4j2
@@ -43,14 +45,10 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     @JsonView(ArticleView.Id.class)
-    @Getter
-    @Setter // if entity is from database, i would set its value
     private Integer id;
 
     @Column
     @Enumerated(EnumType.STRING)
-    @Getter
-    @Setter
     private ArticleState state;
 
     /**
@@ -58,8 +56,6 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.IdTitle.class)
-    @Getter
-    @Setter
     private String title;
 
     /**
@@ -67,8 +63,6 @@ public class Article {
      */
     @Column
     @JsonView({ArticleView.IdTitleManufacturer.class, ArticleView.Id.class})
-    @Getter
-    @Setter
     private String manufacturer;
 
     /**
@@ -76,8 +70,6 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.IdTitleManufacturerName.class)
-    @Getter
-    @Setter
     private String name;
 
     /**
@@ -85,8 +77,6 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.FullArticle.class)
-    @Getter
-    @Setter
     private Double mass_si;
 
     /**
@@ -94,21 +84,15 @@ public class Article {
      */
     @Column
     @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
-    @Getter
-    @Setter
     private String garantee;
 
     @Column(updatable = false, name = "creation_date_time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
     @JsonView(ArticleView.IdTitleDate.class)
-    @Getter
-    @Setter // if entity is from database, i would set its value
     private LocalDateTime creationDateTime;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
-    @Getter
-    @Setter
     private LocalDateTime updatedAt;
 
     @ManyToMany(cascade = {CascadeType.ALL})
