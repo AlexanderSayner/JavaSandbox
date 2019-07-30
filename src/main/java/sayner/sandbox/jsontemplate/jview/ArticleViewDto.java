@@ -5,7 +5,7 @@ package sayner.sandbox.jsontemplate.jview;
  * Связь между интерфейсами и полем сущности прописывается с помощью аннотации в классе объекта,
  * а используется уже при использовании соответствуещей аннотации в контроллере
  */
-public final class ArticleView {
+public final class ArticleViewDto {
 
     /**
      * Интерфейс-маркер для поля Id
@@ -32,6 +32,12 @@ public final class ArticleView {
     }
 
     public interface CreationDate {
+    }
+
+    public interface UpdateDate {
+    }
+
+    public interface Warehouses {
     }
 
     public interface IdStateName extends Id, State, Name {

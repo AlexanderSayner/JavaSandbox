@@ -1,8 +1,5 @@
 package sayner.sandbox.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +8,6 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.models.enums.ArticleState;
 
 import javax.persistence.*;
@@ -45,52 +41,43 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    @JsonView(ArticleView.Id.class)
     private Integer id;
 
     @Column
     @Enumerated(EnumType.STRING)
-    @JsonView(ArticleView.State.class)
     private ArticleState state;
 
     /**
      * Наименование товара
      */
     @Column
-    @JsonView(ArticleView.Title.class)
     private String title;
 
     /**
      * Производитель
      */
     @Column
-    @JsonView({ArticleView.Manufacturer.class, ArticleView.Id.class})
     private String manufacturer;
 
     /**
      * Имя, данное производителем изделия
      */
     @Column
-    @JsonView(ArticleView.Name.class)
     private String name;
 
     /**
      * Масса в СИ
      */
     @Column
-    @JsonView(ArticleView.Mass.class)
     private Double mass_si;
 
     /**
      * Гарантия
      */
     @Column
-    @JsonView(ArticleView.Garantee.class)
-    private String garantee;
+    private String guarantee;
 
     @Column(updatable = false, name = "creation_date_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
-    @JsonView(ArticleView.CreationDate.class)
     private LocalDateTime creationDateTime;
 
     @Column(name = "updated_at")
@@ -113,7 +100,6 @@ public class Article {
         return String.valueOf(getId());
     }
 
-    @JsonIgnore
     public Set<Warehouse> getWarehouses() {
         return this.warehouses;
     }
@@ -129,7 +115,8 @@ public class Article {
         this.manufacturer = manufacturer;
         this.name = title + "_" + manufacturer;
         this.mass_si = 1d;
-        this.garantee = "нет";
+        this.guarantee = "нет";
+        this.setWarehouses(null);
     }
 
     /**
@@ -147,8 +134,8 @@ public class Article {
         this.manufacturer = manufacturer;
         this.name = name;
         this.mass_si = mass_si;
-        this.garantee = garantee;
-        this.warehouses = warehouses;
+        this.guarantee = garantee;
+        this.setWarehouses(warehouses);
     }
 
     /**
@@ -188,7 +175,7 @@ public class Article {
                 this.manufacturer,
                 this.name,
                 this.id,
-                this.garantee,
+                this.guarantee,
                 this.mass_si,
                 this.creationDateTime,
                 this.updatedAt
@@ -222,8 +209,8 @@ public class Article {
             if (this.mass_si != anotherArticle.mass_si)
                 return false;
             // если они оба null, то считается как соответвие, и проверка идёт дальше
-            if (this.garantee != null && anotherArticle.garantee != null) { //проверка на null
-                if (!this.garantee.equals(anotherArticle.garantee)) //проверка на соответствие
+            if (this.guarantee != null && anotherArticle.guarantee != null) { //проверка на null
+                if (!this.guarantee.equals(anotherArticle.guarantee)) //проверка на соответствие
                     return false;
             }
 //            if (this.creationDateTime != anotherArticle.creationDateTime)

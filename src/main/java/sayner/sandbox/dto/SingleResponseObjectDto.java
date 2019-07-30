@@ -6,17 +6,16 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
 import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 
-import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 
 @NoArgsConstructor
 @Getter
 @Log4j2
-public class SingleResponseObjectDto<T> {
+public final class SingleResponseObjectDto<T> {
 
     @Getter(value = AccessLevel.PRIVATE)
     private final EnumMap<StatusEnum, StatusCodeEnum> errorCodeEnum =
@@ -41,7 +40,7 @@ public class SingleResponseObjectDto<T> {
             SingleResponseObjectDtoView.DataOrException.class,
             SingleResponseObjectDtoView.StatusCodeMessageDataOrException.class,
             SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrException.class,
-            ArticleView.FullArticle.class
+            ArticleViewDto.FullArticle.class
     })
     private T dataOrException;
 

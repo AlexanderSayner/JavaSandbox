@@ -15,7 +15,7 @@ import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
-import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
 import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
@@ -93,7 +93,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/{id}")
-//    @JsonView(ArticleView.IdTitleDate.class)
+//    @JsonView(ArticleViewDto.IdTitleDate.class)
     public ResponseEntity<Object> getArticle(@PathVariable int id) {
         ResponseHandler responseHandler = new ResponseHandler();
 
@@ -126,7 +126,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/session", params = {"name"})
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -136,7 +136,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/session", params = {"manufacturer"})
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -152,7 +152,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/criteria", params = {"by", "value"})
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
                                                          @RequestParam("value") String value) {
 
@@ -227,7 +227,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(params = {"name"})
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> filterByName(
             @RequestParam("name") String name
     ) {
@@ -266,7 +266,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping(value = "filter")
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public Page<Article> filterByExample(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -279,14 +279,14 @@ public class ArticleController {
     }
 
     @GetMapping(value = "filter", params = "name")
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findBName(@RequestParam("name") String name) {
 
         return articleService.findByName(name);
     }
 
     @GetMapping(value = "filter", params = "manufacturer")
-    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findByManufacturer(@RequestParam("manufacturer") String manufacturer) {
 
         System.out.println(manufacturer);
