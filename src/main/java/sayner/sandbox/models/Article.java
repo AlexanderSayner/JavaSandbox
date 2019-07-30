@@ -69,7 +69,7 @@ public class Article {
      * Масса в СИ
      */
     @Column
-    private Double mass_si;
+    private Double massSi;
 
     /**
      * Гарантия
@@ -114,7 +114,7 @@ public class Article {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = title + "_" + manufacturer;
-        this.mass_si = 1d;
+        this.massSi = 1d;
         this.guarantee = "нет";
         this.setWarehouses(null);
     }
@@ -133,7 +133,7 @@ public class Article {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = name;
-        this.mass_si = mass_si;
+        this.massSi = mass_si;
         this.guarantee = garantee;
         this.setWarehouses(warehouses);
     }
@@ -176,7 +176,7 @@ public class Article {
                 this.name,
                 this.id,
                 this.guarantee,
-                this.mass_si,
+                this.massSi,
                 this.creationDateTime,
                 this.updatedAt
         );
@@ -206,7 +206,7 @@ public class Article {
                 return false;
             if (!this.name.equals(anotherArticle.name))
                 return false;
-            if (this.mass_si != anotherArticle.mass_si)
+            if (this.massSi != anotherArticle.massSi)
                 return false;
             // если они оба null, то считается как соответвие, и проверка идёт дальше
             if (this.guarantee != null && anotherArticle.guarantee != null) { //проверка на null

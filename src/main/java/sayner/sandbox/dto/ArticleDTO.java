@@ -51,7 +51,7 @@ public final class ArticleDTO {
     private ArticleState state;
 
     @JsonView(ArticleViewDto.Mass.class)
-    private String mass_si;
+    private String massSi;
 
     @JsonView(ArticleViewDto.Garantee.class)
     private String guarantee;
@@ -81,7 +81,7 @@ public final class ArticleDTO {
         this.title = title;
         this.manufacturer = manufacturer;
         this.state = articleState;
-        this.mass_si = mass_si;
+        this.massSi = mass_si;
         this.guarantee = guarantee;
         this.creationDateTime = creationDateTime;
         this.updatedAt = updatedAt;

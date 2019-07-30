@@ -22,8 +22,7 @@ public interface ArticleMapper {
      * @return
      */
     @Mappings({
-            @Mapping(source = "name", target = "full_name"),
-            @Mapping(source = "id", target = "serial_id")
+            @Mapping(source = "id", target = "articleId")
     })
     ArticleDTO toArticleDTO(Article article);
 
