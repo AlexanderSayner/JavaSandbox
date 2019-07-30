@@ -80,7 +80,7 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        return new SingleResponseObjectDto(StatusEnum.AnyOtherShit, "Any information", true, articleService.getAllArticles());
+        return new SingleResponseObjectDto(StatusEnum.AnyOtherShit, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }

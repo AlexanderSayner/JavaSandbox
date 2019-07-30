@@ -2,8 +2,7 @@ package sayner.sandbox.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
 import sayner.sandbox.models.Warehouse;
@@ -31,7 +30,10 @@ import java.util.Set;
 //    @DateTimeFormat(pattern = "dd/MM/yyyy") // Allows dd/MM/yyyy date to be passed into GET request in JSON
 //    private LocalDateTime creationDateTime;
 @NoArgsConstructor
-@Data
+@ToString
+@EqualsAndHashCode
+@Getter
+@Setter
 @Log4j2
 public final class ArticleDTO {
 
@@ -68,13 +70,19 @@ public final class ArticleDTO {
     private Set<Warehouse> warehouses;
 
     /**
-     * extended getter'ы & setter'ы
+     * Огромнеймий конструктор, чтобы всё и сразу заполнить
+     *
+     * @param articleId
+     * @param name
+     * @param title
+     * @param manufacturer
+     * @param articleState
+     * @param mass_si
+     * @param guarantee
+     * @param creationDateTime
+     * @param updatedAt
+     * @param warehouses
      */
-
-    public void setWarehouses(Set<Warehouse> warehouses) {
-        this.warehouses = Collections.unmodifiableSet(warehouses);
-    }
-
     public ArticleDTO(Integer articleId, String name, String title, String manufacturer, ArticleState articleState, String mass_si, String guarantee, LocalDateTime creationDateTime, LocalDateTime updatedAt, Set<Warehouse> warehouses) {
         this.articleId = articleId;
         this.name = name;
@@ -85,6 +93,6 @@ public final class ArticleDTO {
         this.guarantee = guarantee;
         this.creationDateTime = creationDateTime;
         this.updatedAt = updatedAt;
-        this.setWarehouses(warehouses);
+        this.warehouses = Collections.unmodifiableSet(warehouses);
     }
 }
