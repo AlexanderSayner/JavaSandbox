@@ -1,6 +1,7 @@
 package sayner.sandbox.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
+import sayner.sandbox.dto.SingleResponseObjectDto;
+import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
@@ -31,13 +34,13 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/articles")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class ArticleController {
 
-    @Autowired
-    private ArticleService articleService;
-    @Autowired
-    private ModelResponse modelResponse;
+    private final ArticleService articleService;
+
+    private final ModelResponse modelResponse;
 
 
     /**
@@ -47,7 +50,8 @@ public class ArticleController {
      */
     @GetMapping
     //@JsonView(ArticleView.IdTitleDate.class)
-    public ResponseEntity<Object> getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDto<Object> getAllArticlesTest() throws IOException {
+
 
         Warehouse warehouse = new Warehouse();
         Set<Warehouse> warehouses = new HashSet<>();
@@ -75,7 +79,8 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
+        return new SingleResponseObjectDto(StatusEnum.AnyOtherShit, "Any information", true, articleService.getAllArticles());
+//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }
 
