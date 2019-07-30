@@ -16,7 +16,7 @@ import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.models.Warehouse;
-import sayner.sandbox.services.impl.ArticleServiceImpl;
+import sayner.sandbox.services.ArticleService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.util.Set;
 public class ArticleController {
 
     @Autowired
-    private ArticleServiceImpl articleService;
+    private ArticleService articleService;
     @Autowired
     private ModelResponse modelResponse;
 

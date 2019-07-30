@@ -43,6 +43,7 @@ public class ArticleServiceImpl implements ArticleService {
     // logic methods
     //
 
+    @Override
     @SenselessTransaction
     public List<Article> criterian(String filtered_by, String value) {
 
@@ -54,6 +55,7 @@ public class ArticleServiceImpl implements ArticleService {
      *
      * @return
      */
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             isolation = Isolation.READ_UNCOMMITTED,
@@ -88,6 +90,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param id
      * @return
      */
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             isolation = Isolation.SERIALIZABLE,
@@ -103,12 +106,14 @@ public class ArticleServiceImpl implements ArticleService {
         return articleFromDB;
     }
 
+    @Override
     @SenselessTransaction
     public List<Article> getArticlesUsingCriteriaSession(String name) {
 
         return articleRepoHibernate.findAllLikeNameOrderByTitleUsingCriteriaQuery(name);
     }
 
+    @Override
     @SenselessTransaction
     public List<Article> getArticlesLikeManufacturerUsingCriteriaSession(String manufacturer) {
 
@@ -142,7 +147,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @SenselessTransaction
-    public void updateArticle(Article article) {
+    public void updateArticle(Article article) throws ThereIsNoSuchArticleException {
 
         articleRepository.save(article);
     }
@@ -156,6 +161,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public void deleteArticle(int id) {
 
+        Article article = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
+
         articleRepository.deleteById(id);
     }
 
@@ -167,6 +174,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param size
      * @return
      */
+    @Override
     public Page<Article> findPaginated(int page, int size) {
 
         // page num and how many articles in it sorted by id and name (in entity class)
@@ -183,6 +191,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param name
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByName(String name) {
 
@@ -201,6 +210,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param like_this
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRED)
     public List<Article> findArticleLikeName(String like_this) {
 
@@ -218,6 +228,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param manufacturer
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByNameAndManufacturer(String name, String manufacturer) {
 
@@ -237,6 +248,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param exampleArticle
      * @return
      */
+    @Override
     public Page<Article> findByExample(int page, int size, Article exampleArticle) {
 
         Pageable firstPageWithTwoElements = PageRequest.of(page, size, Sort.by("id").descending().and(Sort.by("name").ascending()));
@@ -247,6 +259,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
+    @Override
     public List<Article> findByName(String name) {
 
         List<Article> articlesFromDB = new ArrayList<>();
@@ -261,34 +274,40 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
+    @Override
     @Annotation1
     public void method1() {
         System.out.println("method1");
         this.method2();
     }
 
+    @Override
     @Annotation1
     public void method2() {
         System.out.println("method2");
     }
 
 
+    @Override
     public List<Article> findByManufacturer(String manufacturer) {
 
         return articleRepository.findByManufacturer(manufacturer);
     }
 
+    @Override
     public List<Article> findByTitleLike(String titleLike) {
 
         return articleRepository.findByTitleLike(titleLike);
     }
 
 
+    @Override
     public List<Article> findNativeAll() {
 
         return articleRepository.findNativeAll();
     }
 
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void fillTheDatabase() {
         this.articleRepoHibernate.addEntitiesToTheDatabase();

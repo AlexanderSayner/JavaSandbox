@@ -11,8 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application.properties")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:application.properties")
 @SpringBootTest
 public class RepositoryArticleTest {
 
