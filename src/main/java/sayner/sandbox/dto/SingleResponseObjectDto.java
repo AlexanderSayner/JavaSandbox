@@ -1,13 +1,15 @@
 package sayner.sandbox.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.annotation.Transient;
+import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 
@@ -16,24 +18,39 @@ import java.util.EnumMap;
 @Log4j2
 public class SingleResponseObjectDto<T> {
 
-    @Transient
-//    @Getter(value = AccessLevel.PRIVATE)
+    @Getter(value = AccessLevel.PRIVATE)
     private final EnumMap<StatusEnum, StatusCodeEnum> errorCodeEnum =
             new EnumMap<StatusEnum, StatusCodeEnum>(StatusEnum.class);
 
     @JsonView(SingleResponseObjectDtoView.StatusCode.class)
     private StatusCodeEnum statusCode;
 
-    @JsonView(SingleResponseObjectDtoView.Message.class)
+    @JsonView({
+            SingleResponseObjectDtoView.Message.class,
+            SingleResponseObjectDtoView.StatusCodeMessage.class
+    })
     private String message;
 
-    @JsonView(SingleResponseObjectDtoView.Success.class)
+    @JsonView({
+            SingleResponseObjectDtoView.Success.class,
+            SingleResponseObjectDtoView.StatusCodeMessageSuccess.class
+    })
     private Boolean success;
 
-    @JsonView(SingleResponseObjectDtoView.DataOrException.class)
+    @JsonView({
+            SingleResponseObjectDtoView.DataOrException.class,
+            SingleResponseObjectDtoView.StatusCodeMessageDataOrException.class,
+            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrException.class,
+            ArticleView.FullArticle.class
+    })
     private T dataOrException;
 
-    @JsonView(SingleResponseObjectDtoView.OperationDateAndTime.class)
+    @JsonView({
+            SingleResponseObjectDtoView.OperationDateAndTime.class,
+            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class
+    })
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
     private LocalDateTime operationDateAndTime;
 
     public SingleResponseObjectDto(StatusEnum status, String message, Boolean success, T dataOrException) {

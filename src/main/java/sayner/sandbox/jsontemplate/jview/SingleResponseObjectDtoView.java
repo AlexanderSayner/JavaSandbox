@@ -17,16 +17,16 @@ public class SingleResponseObjectDtoView {
     public interface OperationDateAndTime {
     }
 
-    public interface StatusCodeMessage extends StatusCode {
+    public interface StatusCodeMessage extends StatusCode,Message {
     }
 
-    public interface StatusCodeMessageSuccess extends StatusCodeMessage {
+    public interface StatusCodeMessageSuccess extends StatusCode,Message,Success {
     }
 
     public interface StatusCodeMessageSuccessDataOrException extends StatusCodeMessageSuccess {
     }
 
-    public interface StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime extends StatusCodeMessageSuccessDataOrException {
+    public interface StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime extends StatusCodeMessageSuccessDataOrException, ArticleView.FullArticle {
     }
 
     public interface StatusCodeMessageDataOrException extends StatusCodeMessage {

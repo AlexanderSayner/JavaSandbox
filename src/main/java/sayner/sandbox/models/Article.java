@@ -50,6 +50,7 @@ public class Article {
 
     @Column
     @Enumerated(EnumType.STRING)
+    @JsonView(ArticleView.IdTitle.class)
     private ArticleState state;
 
     /**

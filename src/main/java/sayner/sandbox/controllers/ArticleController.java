@@ -16,6 +16,7 @@ import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
 import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.models.Warehouse;
@@ -49,7 +50,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping
-    //@JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
     public SingleResponseObjectDto<Object> getAllArticlesTest() throws IOException {
 
 
