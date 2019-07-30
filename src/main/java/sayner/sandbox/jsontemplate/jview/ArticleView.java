@@ -13,53 +13,33 @@ public final class ArticleView {
     public interface Id {
     }
 
-    ;
-
-    /**
-     * Будет отображать всё то, что унаследует, так ещё и свои поля добавит
-     */
-    public interface IdTitle extends Id {
+    public interface State {
     }
 
-    ;
-
-    /**
-     *
-     */
-    public interface IdTitleManufacturer extends IdTitle {
+    public interface Title {
     }
 
-    ;
-
-    /**
-     * Всё самое необходимое
-     */
-    public interface IdTitleDate extends IdTitle {
+    public interface Manufacturer {
     }
 
-    ;
-
-    /**
-     *
-     */
-    public interface IdTitleManufacturerName extends IdTitleManufacturer {
+    public interface Name {
     }
 
-    ;
-
-    /**
-     *
-     */
-    public interface IdTitleManufacturerNameGarantee extends IdTitleManufacturerName {
+    public interface Mass {
     }
 
-    ;
-
-    /**
-     * Вообще всё, что только можно
-     */
-    public interface FullArticle extends IdTitleManufacturerNameGarantee {
+    public interface Garantee {
     }
 
-    ;
+    public interface CreationDate {
+    }
+
+    public interface IdStateName extends Id, State, Name {
+    }
+
+    public interface IdStateTitleManufacturerNameCreationDate extends Id, State, Title, Manufacturer, Name, CreationDate {
+    }
+
+    public interface FullArticle extends Id, State, Title, Manufacturer, Name, Mass, Garantee, CreationDate {
+    }
 }

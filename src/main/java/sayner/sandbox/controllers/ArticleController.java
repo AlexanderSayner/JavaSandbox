@@ -126,7 +126,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/session", params = {"name"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -136,7 +136,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/session", params = {"manufacturer"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -152,7 +152,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/criteria", params = {"by", "value"})
-    @JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
                                                          @RequestParam("value") String value) {
 
@@ -227,7 +227,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(params = {"name"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> filterByName(
             @RequestParam("name") String name
     ) {
@@ -266,7 +266,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping(value = "filter")
-    @JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public Page<Article> filterByExample(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -279,14 +279,14 @@ public class ArticleController {
     }
 
     @GetMapping(value = "filter", params = "name")
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findBName(@RequestParam("name") String name) {
 
         return articleService.findByName(name);
     }
 
     @GetMapping(value = "filter", params = "manufacturer")
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findByManufacturer(@RequestParam("manufacturer") String manufacturer) {
 
         System.out.println(manufacturer);

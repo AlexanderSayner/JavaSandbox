@@ -50,7 +50,7 @@ public class SingleResponseObjectDto<T> {
             SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class
     })
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime operationDateAndTime;
 
     public SingleResponseObjectDto(StatusEnum status, String message, Boolean success, T dataOrException) {

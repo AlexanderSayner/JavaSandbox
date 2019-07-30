@@ -50,47 +50,47 @@ public class Article {
 
     @Column
     @Enumerated(EnumType.STRING)
-    @JsonView(ArticleView.IdTitle.class)
+    @JsonView(ArticleView.State.class)
     private ArticleState state;
 
     /**
      * Наименование товара
      */
     @Column
-    @JsonView(ArticleView.IdTitle.class)
+    @JsonView(ArticleView.Title.class)
     private String title;
 
     /**
      * Производитель
      */
     @Column
-    @JsonView({ArticleView.IdTitleManufacturer.class, ArticleView.Id.class})
+    @JsonView({ArticleView.Manufacturer.class, ArticleView.Id.class})
     private String manufacturer;
 
     /**
      * Имя, данное производителем изделия
      */
     @Column
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleView.Name.class)
     private String name;
 
     /**
      * Масса в СИ
      */
     @Column
-    @JsonView(ArticleView.FullArticle.class)
+    @JsonView(ArticleView.Mass.class)
     private Double mass_si;
 
     /**
      * Гарантия
      */
     @Column
-    @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
+    @JsonView(ArticleView.Garantee.class)
     private String garantee;
 
     @Column(updatable = false, name = "creation_date_time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
-    @JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(ArticleView.CreationDate.class)
     private LocalDateTime creationDateTime;
 
     @Column(name = "updated_at")
