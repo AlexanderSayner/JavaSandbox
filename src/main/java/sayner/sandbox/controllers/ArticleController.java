@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
-import sayner.sandbox.dto.SingleResponseObjectDto;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
 import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
@@ -51,7 +51,7 @@ public class ArticleController {
      */
     @GetMapping
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
-    public SingleResponseObjectDto<Object> getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDtoExtd<Object> getAllArticlesTest() throws IOException {
 
 
         Warehouse warehouse = new Warehouse();
@@ -80,7 +80,7 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        return new SingleResponseObjectDto(StatusEnum.AnyOtherShit, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
+        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }

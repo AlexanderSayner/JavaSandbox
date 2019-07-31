@@ -1,63 +1,37 @@
 package sayner.sandbox.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
-import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 
-import java.time.LocalDateTime;
 import java.util.EnumMap;
 
-@NoArgsConstructor
-@Getter
 @Log4j2
-public final class SingleResponseObjectDto<T> {
+public abstract class SingleResponseObjectDto {
 
     @Getter(value = AccessLevel.PRIVATE)
     private final EnumMap<StatusEnum, StatusCodeEnum> errorCodeEnum =
             new EnumMap<StatusEnum, StatusCodeEnum>(StatusEnum.class);
 
-    @JsonView(SingleResponseObjectDtoView.StatusCode.class)
-    private StatusCodeEnum statusCode;
+    protected SingleResponseObjectDto() {
 
-    @JsonView({
-            SingleResponseObjectDtoView.Message.class,
-            SingleResponseObjectDtoView.StatusCodeMessage.class
-    })
-    private String message;
+        errorCodeEnum.put(StatusEnum.AllDoneWell,StatusCodeEnum.StatusCode6000);
+        errorCodeEnum.put(StatusEnum.ArticleNotFound,StatusCodeEnum.StatusCode6001);
+        errorCodeEnum.put(StatusEnum.ArticleIdDoesNotExist,StatusCodeEnum.StatusCode6002);
+        errorCodeEnum.put(StatusEnum.ArticleEntityIsNull,StatusCodeEnum.StatusCode6003);
+        errorCodeEnum.put(StatusEnum.ArticleHasNoData,StatusCodeEnum.StatusCode6004);
+        errorCodeEnum.put(StatusEnum.WarehouseNotFound,StatusCodeEnum.StatusCode6011);
+        errorCodeEnum.put(StatusEnum.WarehouseIdDoesNotExist,StatusCodeEnum.StatusCode6012);
+        errorCodeEnum.put(StatusEnum.WarehouseEntityIsNull,StatusCodeEnum.StatusCode6013);
+        errorCodeEnum.put(StatusEnum.WarehouseHasNoData,StatusCodeEnum.StatusCode6014);
+        errorCodeEnum.put(StatusEnum.CouldNotTransferArticleToArticleDTO,StatusCodeEnum.StatusCode6101);
+        errorCodeEnum.put(StatusEnum.CouldNotTransferArticleDTOToArticle,StatusCodeEnum.StatusCode6102);
+        errorCodeEnum.put(StatusEnum.CouldNotTransferWarehouseToWarehouseDTO,StatusCodeEnum.StatusCode6103);
+        errorCodeEnum.put(StatusEnum.CouldNotTransferWarehouseDTOToWarehouse,StatusCodeEnum.StatusCode6104);
+        errorCodeEnum.put(StatusEnum.AnyOtherShit,StatusCodeEnum.StatusCode6666);
+    }
 
-    @JsonView({
-            SingleResponseObjectDtoView.Success.class,
-            SingleResponseObjectDtoView.StatusCodeMessageSuccess.class
-    })
-    private Boolean success;
-
-    @JsonView({
-            SingleResponseObjectDtoView.DataOrException.class,
-            SingleResponseObjectDtoView.StatusCodeMessageDataOrException.class,
-            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrException.class,
-            ArticleViewDto.FullArticle.class
-    })
-    private T dataOrException;
-
-    @JsonView({
-            SingleResponseObjectDtoView.OperationDateAndTime.class,
-            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class
-    })
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime operationDateAndTime;
-
-    public SingleResponseObjectDto(StatusEnum status, String message, Boolean success, T dataOrException) {
-
-        this.statusCode = this.errorCodeEnum.get(status);
-        this.message = message;
-        this.success = success;
-        this.dataOrException = dataOrException;
-        this.operationDateAndTime = LocalDateTime.now();
+    protected StatusCodeEnum getErrorCodeEnum(StatusEnum statusEnum) {
+        return this.errorCodeEnum.get(statusEnum);
     }
 }
