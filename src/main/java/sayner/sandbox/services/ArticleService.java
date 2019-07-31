@@ -47,4 +47,6 @@ public interface ArticleService {
     List<Article> findNativeAll();
 
     void fillTheDatabase();
+
+    void cacheChecking();
 }

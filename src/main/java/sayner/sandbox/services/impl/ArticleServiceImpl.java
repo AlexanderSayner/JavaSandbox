@@ -64,9 +64,9 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getAllArticles() {
 
         // TESTING
-        this.articleRepoHibernate.ArticleSoftDeleteMethod();
-        this.articleRepoHibernate.OneMoreCheck();
-        this.articleRepoHibernate.ThirdCheck();
+        this.articleRepoHibernate.articleSoftDeleteMethod();
+        this.articleRepoHibernate.oneMoreCheck();
+        this.articleRepoHibernate.thirdCheck();
         // TESTING
 
         // сюда потом начнут складываться объекты из базы
@@ -311,5 +311,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void fillTheDatabase() {
         this.articleRepoHibernate.addEntitiesToTheDatabase();
+    }
+
+    @Override
+    public void cacheChecking() {
+
+        this.articleRepoHibernate.secondLevelCacheCheck();
     }
 }

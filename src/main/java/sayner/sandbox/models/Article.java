@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,6 +29,8 @@ import java.util.Set;
 // By default: @SQLDelete(sql = "DELETE from Articles_List WHERE id = ?", check = ResultCheckStyle.COUNT)
 @NamedQuery(name = "Article.FindByName", query = "from Article a WHERE a.name like :name")
 @Table(name = "Articles_List")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -84,6 +87,7 @@ public class Article {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "Article_Warehouse",

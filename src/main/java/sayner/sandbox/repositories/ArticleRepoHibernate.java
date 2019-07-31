@@ -17,11 +17,13 @@ public interface ArticleRepoHibernate {
 
     Integer getLastIdFromArticles();
 
-    void ArticleSoftDeleteMethod();
+    void articleSoftDeleteMethod();
 
-    void OneMoreCheck();
+    void oneMoreCheck();
 
-    void ThirdCheck();
+    void thirdCheck();
 
     void addEntitiesToTheDatabase();
+
+    void secondLevelCacheCheck();
 }

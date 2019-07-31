@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
-import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
 import sayner.sandbox.dto.StatusEnum;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
@@ -43,6 +43,13 @@ public class ArticleController {
 
     private final ModelResponse modelResponse;
 
+
+    @GetMapping(value = "/cache")
+    public SingleResponseObjectDtoExtd<Object> getMyCacheTesting() throws IOException {
+
+        this.articleService.cacheChecking();
+        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Cache test has started", true, null);
+    }
 
     /**
      * Отображает каталог товаров
@@ -93,7 +100,6 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/{id}")
-//    @JsonView(ArticleViewDto.IdTitleDate.class)
     public ResponseEntity<Object> getArticle(@PathVariable int id) {
         ResponseHandler responseHandler = new ResponseHandler();
 

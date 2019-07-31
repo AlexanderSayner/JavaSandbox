@@ -1,12 +1,10 @@
 package sayner.sandbox.repositories.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.stereotype.Repository;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.exceptions.ThereIsNullId;
@@ -25,18 +23,26 @@ import java.util.*;
  * Истольлование инструментоа Hibernate
  */
 @Repository
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
+    private final SessionFactory sessionFactory;
     private final EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    public ArticleRepoHibernateImpl(EntityManagerFactory entityManagerFactory) {
+
+        this.entityManagerFactory = entityManagerFactory;
+        this.sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+    }
+
 
     @Override
     public List<Article> filterFlexibility(String filtered_by, String value) {
 
         List<Article> articleList = new ArrayList<>();
 
-        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        Session session = this.sessionFactory.openSession();
         session.getTransaction().begin();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -60,7 +66,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         Optional<Integer> lastId = null;
 
-        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        Session session = this.sessionFactory.openSession();
         session.getTransaction().begin();
 
 
@@ -94,10 +100,10 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public Article findById(int id) {
 
-        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        Session session = this.sessionFactory.openSession();
         session.getTransaction().begin();
 
-        Article article = session.get(Article.class, id);
+        Article article = session.load(Article.class, id);
 
         if (article == null) {
             log.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
@@ -105,6 +111,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
             session.close();
             throw new ThereIsNoSuchArticleException();
         }
+
+//        log.info(article.getWarehouses().toString());
 
         session.getTransaction().commit();
         session.close();
@@ -115,7 +123,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public List<Article> findAllLikeNameOrderByTitleUsingCriteriaQuery(String name) {
 
-        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        Session session = this.sessionFactory.openSession();
         session.getTransaction().begin();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -140,8 +148,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public List<Article> findAllLikeManufacturer(String manufacturer) {
 
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        Session session = sessionFactory.openSession();
+        Session session = this.sessionFactory.openSession();
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
@@ -161,7 +168,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      * Сделано в одном методе для пущей наглядности
      */
     @Override
-    public void ArticleSoftDeleteMethod() {
+    public void articleSoftDeleteMethod() {
 
         log.info("=== Article Soft Delete ===");
 
@@ -297,7 +304,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      *
      */
     @Override
-    public void OneMoreCheck() {
+    public void oneMoreCheck() {
 
         log.info("\n");
         log.info("=================================================");
@@ -416,7 +423,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
      * в ThirdCheck() достаёт сущность из базы, поэтому merge(warehouse) обязателен
      */
     @Override
-    public void ThirdCheck() {
+    public void thirdCheck() {
 
         log.info("\n");
         log.info("===================================================================");
@@ -432,8 +439,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         log.info("=== Open the session ===");
-        SessionFactory sessionFactory = this.entityManagerFactory.unwrap(SessionFactory.class);
-        Session session = sessionFactory.openSession();
+        Session session = this.sessionFactory.openSession();
         log.info("=== Begin transaction ===");
         session.beginTransaction();
 
@@ -508,8 +514,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     public void addEntitiesToTheDatabase() {
 
         log.info("=== Open the session ===");
-        SessionFactory sessionFactory = this.entityManagerFactory.unwrap(SessionFactory.class);
-        Session session = sessionFactory.openSession();
+        Session session = this.sessionFactory.openSession();
 
         Warehouse warehouse = new Warehouse();
         Set<Warehouse> warehouses = new HashSet<>();
@@ -535,5 +540,44 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         session.close();
 
         log.info("=== From repo: all articles have been added to the database");
+    }
+
+    @Override
+    public void secondLevelCacheCheck() {
+
+        log.info("=== Second Level Cache ===");
+
+        Integer id = this.getLastIdFromArticles();
+
+        log.info("=== Opening the session ===");
+        Session session = this.sessionFactory.openSession();
+
+        log.info("=== Begin Transaction ===");
+        session.getTransaction().begin();
+
+        log.info("=== First time loading ===");
+        Article article = session.load(Article.class, id);
+
+        log.info("=== Commit ===");
+        session.getTransaction().commit();
+        log.info("=== Closing session ===");
+        session.close();
+
+//        //////////////////////////////////////////////////////////////////////////////////////////////
+//        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+        log.info("=== Opening the session ===");
+        session = this.sessionFactory.openSession();
+
+        log.info("=== Begin Transaction ===");
+        session.getTransaction().begin();
+
+        log.info("=== Second time loading ===");
+        Article article_2 = session.load(Article.class, id);
+
+        log.info("=== Commit ===");
+        session.getTransaction().commit();
+        log.info("=== Closing session ===");
+        session.close();
     }
 }
