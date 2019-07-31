@@ -1,23 +1,16 @@
 package sayner.sandbox.dto;
 
-import org.omg.CORBA.INTERNAL;
-import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
+import lombok.extern.log4j.Log4j2;
+import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
+import sayner.sandbox.models.Warehouse;
+import sayner.sandbox.models.enums.ArticleState;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.swing.text.html.Option;
-import java.util.Optional;
-
-public class ArticleDTO {
-
-    /**
-     *
-     */
-    private int serial_id;
-
-    /**
-     *
-     */
-    private String full_name;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
 
 
 //    /**
@@ -36,40 +29,70 @@ public class ArticleDTO {
 //     */
 //    @DateTimeFormat(pattern = "dd/MM/yyyy") // Allows dd/MM/yyyy date to be passed into GET request in JSON
 //    private LocalDateTime creationDateTime;
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter
+@Setter
+@Log4j2
+public final class ArticleDTO {
 
+    @JsonView(ArticleViewDto.Id.class)
+    private Integer articleId;
 
-    public ArticleDTO() {
-    }
+    @JsonView(ArticleViewDto.Name.class)
+    private String name;
+
+    @JsonView(ArticleViewDto.Title.class)
+    private String title;
+
+    @JsonView({ArticleViewDto.Manufacturer.class, ArticleViewDto.Id.class})
+    private String manufacturer;
+
+    @JsonView(ArticleViewDto.State.class)
+    private ArticleState state;
+
+    @JsonView(ArticleViewDto.Mass.class)
+    private String massSi;
+
+    @JsonView(ArticleViewDto.Garantee.class)
+    private String guarantee;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
+    @JsonView(ArticleViewDto.CreationDate.class)
+    private LocalDateTime creationDateTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
+    @JsonView(ArticleViewDto.UpdateDate.class)
+    private LocalDateTime updatedAt;
+
+    @JsonView(ArticleViewDto.Warehouses.class)
+    private Set<Warehouse> warehouses;
 
     /**
-     * @param id
+     * Огромнеймий конструктор, чтобы всё и сразу заполнить
+     *
+     * @param articleId
      * @param name
+     * @param title
+     * @param manufacturer
+     * @param articleState
+     * @param mass_si
+     * @param guarantee
+     * @param creationDateTime
+     * @param updatedAt
+     * @param warehouses
      */
-    public ArticleDTO(int id, String name) {
-
-        this.serial_id = id;
-        this.full_name = name;
-    }
-
-    public int getSerial_id() {
-        return serial_id;
-    }
-
-    public void setSerial_id(int serial_id) {
-        this.serial_id = serial_id;
-    }
-
-    public String getFull_name() {
-        return full_name;
-    }
-
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
-    }
-
-    @Override
-    public String toString() {
-
-        return "Article entity: " + this.serial_id + ", " + this.full_name + ".";
+    public ArticleDTO(Integer articleId, String name, String title, String manufacturer, ArticleState articleState, String mass_si, String guarantee, LocalDateTime creationDateTime, LocalDateTime updatedAt, Set<Warehouse> warehouses) {
+        this.articleId = articleId;
+        this.name = name;
+        this.title = title;
+        this.manufacturer = manufacturer;
+        this.state = articleState;
+        this.massSi = mass_si;
+        this.guarantee = guarantee;
+        this.creationDateTime = creationDateTime;
+        this.updatedAt = updatedAt;
+        this.warehouses = Collections.unmodifiableSet(warehouses);
     }
 }

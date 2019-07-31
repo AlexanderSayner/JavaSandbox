@@ -1,7 +1,7 @@
 package sayner.sandbox.services.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,60 +14,40 @@ import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
+import sayner.sandbox.repositories.ArticleRepoHibernate;
 import sayner.sandbox.repositories.ArticleRepository;
-import sayner.sandbox.repositories.impl.ArticleRepoHibernateImpl;
 import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.specifications.ArticleSpecs;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class ArticleServiceImpl implements ArticleService {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * Тёплый и ламповый способ
+     */
+    private final ArticleRepository articleRepository;
 
     /**
-     * Подключение репозитория
-     * Injects the ArticleRepository instance
+     * Хардкорный и беспощадный
      */
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private ArticleRepoHibernateImpl articleRepoHibernate;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final ArticleRepoHibernate articleRepoHibernate;
 
     //
     // logic methods
     //
 
+    @Override
     @SenselessTransaction
     public List<Article> criterian(String filtered_by, String value) {
 
-        List<Article> articleList = new ArrayList<>();
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
-        Root<Article> articleRoot = criteriaQuery.from(Article.class);
-
-        criteriaQuery.select(articleRoot);
-        criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
-        entityManager.createQuery(criteriaQuery)
-                .getResultList()
-                .forEach(article -> articleList.add(article))
-        ;
-
-        return articleList;
+        return this.articleRepoHibernate.filterFlexibility(filtered_by, value);
     }
 
     /**
@@ -75,9 +55,10 @@ public class ArticleServiceImpl implements ArticleService {
      *
      * @return
      */
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
-            isolation = Isolation.REPEATABLE_READ,
+            isolation = Isolation.READ_UNCOMMITTED,
             propagation = Propagation.REQUIRED
     )
     public List<Article> getAllArticles() {
@@ -109,6 +90,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param id
      * @return
      */
+    @Override
     @Transactional(
             rollbackFor = Exception.class,
             isolation = Isolation.SERIALIZABLE,
@@ -124,12 +106,14 @@ public class ArticleServiceImpl implements ArticleService {
         return articleFromDB;
     }
 
+    @Override
     @SenselessTransaction
     public List<Article> getArticlesUsingCriteriaSession(String name) {
 
         return articleRepoHibernate.findAllLikeNameOrderByTitleUsingCriteriaQuery(name);
     }
 
+    @Override
     @SenselessTransaction
     public List<Article> getArticlesLikeManufacturerUsingCriteriaSession(String manufacturer) {
 
@@ -163,7 +147,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @SenselessTransaction
-    public void updateArticle(Article article) {
+    public void updateArticle(Article article) throws ThereIsNoSuchArticleException {
 
         articleRepository.save(article);
     }
@@ -177,6 +161,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public void deleteArticle(int id) {
 
+        Article article = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
+
         articleRepository.deleteById(id);
     }
 
@@ -188,6 +174,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param size
      * @return
      */
+    @Override
     public Page<Article> findPaginated(int page, int size) {
 
         // page num and how many articles in it sorted by id and name (in entity class)
@@ -204,6 +191,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param name
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByName(String name) {
 
@@ -222,6 +210,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param like_this
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRED)
     public List<Article> findArticleLikeName(String like_this) {
 
@@ -239,6 +228,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param manufacturer
      * @return
      */
+    @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRED)
     public List<Article> findArticlesByNameAndManufacturer(String name, String manufacturer) {
 
@@ -258,6 +248,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param exampleArticle
      * @return
      */
+    @Override
     public Page<Article> findByExample(int page, int size, Article exampleArticle) {
 
         Pageable firstPageWithTwoElements = PageRequest.of(page, size, Sort.by("id").descending().and(Sort.by("name").ascending()));
@@ -268,6 +259,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
+    @Override
     public List<Article> findByName(String name) {
 
         List<Article> articlesFromDB = new ArrayList<>();
@@ -282,36 +274,42 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
+    @Override
     @Annotation1
     public void method1() {
         System.out.println("method1");
         this.method2();
     }
 
+    @Override
     @Annotation1
     public void method2() {
         System.out.println("method2");
     }
 
 
+    @Override
     public List<Article> findByManufacturer(String manufacturer) {
 
         return articleRepository.findByManufacturer(manufacturer);
     }
 
+    @Override
     public List<Article> findByTitleLike(String titleLike) {
 
         return articleRepository.findByTitleLike(titleLike);
     }
 
 
+    @Override
     public List<Article> findNativeAll() {
 
         return articleRepository.findNativeAll();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
-    public void fillTheDatabase(){
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void fillTheDatabase() {
         this.articleRepoHibernate.addEntitiesToTheDatabase();
     }
 }

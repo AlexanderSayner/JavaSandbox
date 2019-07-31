@@ -40,6 +40,11 @@
         </rollingPolicy>
     </appender>
 
+    <logger name="org.hibernate" additivity="true">
+        <level value="INFO" />
+        <appender-ref ref="SAVE-TO-FILE" />
+    </logger>
+
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SAVE-TO-FILE"/>
