@@ -120,8 +120,7 @@ public class Article {
     }
 
     /**
-     * Конструкор устанавливает разом все параметры, кроме id
-     * т.к. он инкреминтируется автоматически на уровне СУБД
+     * Конструкор устанавливает некоторые параметры
      *
      * @param title
      * @param manufacturer
@@ -136,6 +135,25 @@ public class Article {
         this.massSi = mass_si;
         this.guarantee = garantee;
         this.setWarehouses(warehouses);
+    }
+
+    /**
+     * Конструкор устанавливает некоторые параметры + дата создания
+     *
+     * @param title
+     * @param manufacturer
+     * @param name
+     * @param mass_si
+     * @param garantee
+     */
+    public Article(String title, String manufacturer, String name, double mass_si, String garantee, Set<Warehouse> warehouses, LocalDateTime creationDateTime) {
+        this.title = title;
+        this.manufacturer = manufacturer;
+        this.name = name;
+        this.massSi = mass_si;
+        this.guarantee = garantee;
+        this.setWarehouses(warehouses);
+        this.creationDateTime = creationDateTime;
     }
 
     /**

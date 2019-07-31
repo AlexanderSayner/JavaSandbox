@@ -15,6 +15,8 @@ public interface ArticleRepoHibernate {
 
     List<Article> filterFlexibility(String filtered_by, String value);
 
+    Integer getLastIdFromArticles();
+
     void ArticleSoftDeleteMethod();
 
     void OneMoreCheck();

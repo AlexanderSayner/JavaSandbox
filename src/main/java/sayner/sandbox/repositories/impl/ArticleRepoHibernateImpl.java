@@ -6,8 +6,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.stereotype.Repository;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.exceptions.ThereIsNullId;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
@@ -16,10 +18,8 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Истольлование инструментоа Hibernate
@@ -43,14 +43,52 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
         Root<Article> articleRoot = criteriaQuery.from(Article.class);
 
-        criteriaQuery.select(articleRoot);
-        criteriaQuery.where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
+        criteriaQuery
+                .select(articleRoot)
+                .where(criteriaBuilder.equal(articleRoot.get(filtered_by), value));
+
         articleList = session.createQuery(criteriaQuery).getResultList();
 
         session.getTransaction().commit();
         session.close();
 
         return articleList;
+    }
+
+    @Override
+    public Integer getLastIdFromArticles() {
+
+        Optional<Integer> lastId = null;
+
+        Session session = this.entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        session.getTransaction().begin();
+
+
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
+        Root<Article> articleRoot = criteriaQuery.from(Article.class);
+
+        criteriaQuery
+                .select(articleRoot)
+                .orderBy(criteriaBuilder.desc(articleRoot.get("id")))
+        ;
+
+
+//        lastId = Optional.of(session.createQuery(criteriaQuery).setMaxResults(1).getResultList().get(0).getId());
+
+        Query<Article> articleQuery = session.createQuery(criteriaQuery).setMaxResults(1);
+        List<Article> articleList = articleQuery.getResultList();
+        Article article = articleList.get(0);
+        Integer integerId = article.getId();
+
+        lastId = Optional.of(integerId);
+
+        session.getTransaction().commit();
+        session.close();
+
+        Integer resultId = lastId.orElseThrow(ThereIsNullId::new);
+
+        return resultId;
     }
 
     @Override
@@ -134,7 +172,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         EntityManager entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope", warehouses);
+        Article article = new Article("aw_title", "aw_manufacturer", "Кефир", 45, "nope", warehouses, LocalDateTime.now());
 
         // Push an entity to the context
         log.info("=== Persist an article ===");
@@ -281,7 +319,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         entityManager.getTransaction().begin();
 
         log.info("=== Creating an experimental entity ===");
-        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh", warehouses);
+        Article article = new Article("aw_experimental", "aw+experimental_manufacturer", "Lab rat", 200, "phhh", warehouses, LocalDateTime.now());
 
         log.info("=== Push it into the context ===");
         entityManager.persist(article);
@@ -400,7 +438,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         session.beginTransaction();
 
         log.info("=== Creating an experimental entity ===");
-        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh", warehouses);
+        Article article = new Article("session_experimental", "session_experimental_manufacturer", "session rat", 200, "phhh", warehouses, LocalDateTime.now());
 
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -469,27 +507,32 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
     @Override
     public void addEntitiesToTheDatabase() {
 
-        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+        log.info("=== Open the session ===");
+        SessionFactory sessionFactory = this.entityManagerFactory.unwrap(SessionFactory.class);
+        Session session = sessionFactory.openSession();
 
         Warehouse warehouse = new Warehouse();
         Set<Warehouse> warehouses = new HashSet<>();
         warehouses.add(warehouse);
 
-        int counter = 1000;
-        while (--counter > 0) {
+        Integer lastId = this.getLastIdFromArticles();
+        log.info("=== Last id is " + lastId + "===");
 
-            entityManager.getTransaction().begin();
+        int counter = lastId + 1000;
+        while (--counter > lastId) {
 
-            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope", warehouses);
+            session.getTransaction().begin();
 
-            entityManager.persist(article);
-            entityManager.flush();
+            Article article = new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope", warehouses, LocalDateTime.now());
+            session.persist(article);
+            session.flush();
 
 
-            entityManager.getTransaction().commit();
+            session.getTransaction().commit();
         }
 
-        entityManager.close();
+        log.info("=== Closing session ===");
+        session.close();
 
         log.info("=== From repo: all articles have been added to the database");
     }
