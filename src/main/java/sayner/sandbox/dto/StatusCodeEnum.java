@@ -18,5 +18,8 @@ public enum StatusCodeEnum {
     StatusCode6102,
     StatusCode6103,
     StatusCode6104,
-    StatusCode6666
+    StatusCode6666,
+
+    StatusCode401,
+    StatusCode403
 }
