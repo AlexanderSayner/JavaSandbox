@@ -549,14 +549,27 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         Integer id = this.getLastIdFromArticles();
 
+        log.info("=== Evict data from all query regions ===");
+        org.hibernate.Cache cache = sessionFactory.getCache();
+
+        if (cache != null) {
+            cache.evictAllRegions(); // Evict data from all query regions.
+        }
+
         log.info("=== Opening the session ===");
         Session session = this.sessionFactory.openSession();
+        log.info("=== internal cache clear ===");
+        session.clear();
 
         log.info("=== Begin Transaction ===");
         session.getTransaction().begin();
 
-        log.info("=== First time loading ===");
-        Article article = session.load(Article.class, id);
+        log.info("=== First time loading like session.get(Article.class, id) ===");
+        Article article = session.get(Article.class, id);
+
+        // if i use session.load(), i should do this:
+//        log.info(article.toString());
+        // probably session.load() loads proxy object
 
         log.info("=== Commit ===");
         session.getTransaction().commit();
@@ -566,14 +579,25 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 //        //////////////////////////////////////////////////////////////////////////////////////////////
 //        \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+//        cache = sessionFactory.getCache();
+//
+//        log.info("=== Evict data from all query regions one more time===");
+//        if (cache != null) {
+//            cache.evictAllRegions(); // Evict data from all query regions.
+//        }
+        log.info("=== Not i don't evict any cache ===");
+
+
         log.info("=== Opening the session ===");
         session = this.sessionFactory.openSession();
+        log.info("=== internal cache clear ===");
+        session.clear();
 
         log.info("=== Begin Transaction ===");
         session.getTransaction().begin();
 
-        log.info("=== Second time loading ===");
-        Article article_2 = session.load(Article.class, id);
+        log.info("=== Second time loading like session.get(Article.class, id) ===");
+        Article article_2 = session.get(Article.class, id);
 
         log.info("=== Commit ===");
         session.getTransaction().commit();

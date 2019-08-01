@@ -43,9 +43,9 @@ public final class ArticleViewDto {
     public interface IdStateName extends Id, State, Name {
     }
 
-    public interface IdStateTitleManufacturerNameCreationDate extends Id, State, Title, Manufacturer, Name, CreationDate,Warehouses {
+    public interface IdStateTitleManufacturerNameCreationDate extends Id, State, Title, Manufacturer, Name, CreationDate, Warehouses {
     }
 
-    public interface FullArticle extends Id, State, Title, Manufacturer, Name, Mass, Garantee, CreationDate,Warehouses {
+    public interface FullArticle extends Id, State, Title, Manufacturer, Name, Mass, Garantee, CreationDate, Warehouses {
     }
 }
