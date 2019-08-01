@@ -100,7 +100,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article articleFromDB = new Article();
 
-//            articleFromDB = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
+//        articleFromDB = articleRepository.findById(id).orElseThrow(ThereIsNoSuchArticleException::new);
         articleFromDB = articleRepoHibernate.findById(id);
 
         return articleFromDB;

@@ -1,6 +1,7 @@
 package sayner.sandbox.repositories.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -113,6 +114,8 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         }
 
 //        log.info(article.getWarehouses().toString());
+
+        Hibernate.initialize(article.getWarehouses());
 
         session.getTransaction().commit();
         session.close();

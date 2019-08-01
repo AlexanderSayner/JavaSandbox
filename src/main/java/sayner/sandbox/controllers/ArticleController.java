@@ -100,6 +100,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/{id}")
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
     public ResponseEntity<Object> getArticle(@PathVariable int id) {
         ResponseHandler responseHandler = new ResponseHandler();
 
