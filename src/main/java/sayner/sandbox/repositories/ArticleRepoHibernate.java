@@ -12,4 +12,18 @@ public interface ArticleRepoHibernate {
     List<Article> findAllLikeNameOrderByTitleUsingCriteriaQuery(String name) throws ThereIsNoSuchArticleException;
 
     List<Article> findAllLikeManufacturer(String manufacturer) throws ThereIsNoSuchArticleException;
+
+    List<Article> filterFlexibility(String filtered_by, String value);
+
+    Integer getLastIdFromArticles();
+
+    void articleSoftDeleteMethod();
+
+    void oneMoreCheck();
+
+    void thirdCheck();
+
+    void addEntitiesToTheDatabase();
+
+    void secondLevelCacheCheck();
 }

@@ -1,145 +1,80 @@
 package sayner.sandbox.models;
 
-import org.joda.time.DateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.joda.time.LocalDateTime;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Класс представляет собой филиал птовар на склад
  * В базе соответствующая таблица называется
  * Warehouse
- *
+ * <p>
  * #4
  */
+@Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Log4j2
 public class Warehouse {
 
     /**
      * Индентификатор БД
      */
-    private int id;
-
-    /**
-     * Отледение, в котором находится товар
-     * id_trade_departments
-     */
-    private TradeDepartment tradeDepartment;
-
-    /**
-     * Позиция в каталоге
-     * id_articles_list
-     */
-    private Article article;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "warehouse_id")
+    private Integer id;
 
     /**
      * Дата прибытия на склад
      * got_to_store_date
      */
-    private Date gotToStore;
+    @Column
+    private LocalDateTime gotToStore;
 
     /**
      * Дата изготовления
      * production_date
      */
-    private Date productionDate;
+    @Column
+    private LocalDateTime productionDate;
 
     /**
      * Дата окончания срока годности
      * expiration_date
      */
-    private Date expirationDate;
+    @Column
+    private LocalDateTime expirationDate;
 
-
-    /**
-     * getter'ы & setter'ы
-     */
-    // Сначала getter'ы
-    public int getId() {
-        return id;
-    }
-
-    public TradeDepartment getTradeDepartment() {
-        return tradeDepartment;
-    }
-
-    public Article getArticle() {
-        return article;
-    }
-
-    public Date getGotToStore() {
-        return gotToStore;
-    }
-
-    public Date getProductionDate() {
-        return productionDate;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    // Теперь setter'ы
-
-    public void setTradeDepartment(TradeDepartment tradeDepartment) {
-        this.tradeDepartment = tradeDepartment;
-    }
-
-    public void setArticle(Article article) {
-        this.article = article;
-    }
-
-    public void setGotToStore(Date gotToStore) {
-        this.gotToStore = gotToStore;
-    }
-
-    public void setProductionDate(Date productionDate) {
-        this.productionDate = productionDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    private Set<Article> articles;
 
     /**
-     * Default конструктор
-     */
-    public Warehouse() {
-    }
-
-
-    /**
-     * Конструктор для ленивых автоматически настраивает даты
+     * Min contructor
      *
-     * @param tradeDepartment
-     * @param article
-     * @param gotToStore
+     * @param articles
      */
-    public Warehouse(TradeDepartment tradeDepartment, Article article, Date gotToStore) {
-        this.tradeDepartment = tradeDepartment;
-        this.article = article;
-        this.gotToStore = gotToStore;
-
-        DateTime dateTime = new DateTime(gotToStore);
-
-        this.productionDate = dateTime.minusDays(1).toDate();
-        this.expirationDate = dateTime.plusWeeks(1).toDate();
+    public Warehouse(Set<Article> articles) {
+        this.articles = articles;
     }
 
     /**
-     * Конструкор устанавливает разом все параметры, кроме id
-     * т.к. он инкреминтируется автоматически на уровне СУБД
-     *
-     * @param tradeDepartment
-     * @param article
-     * @param gotToStore
-     * @param productionDate
-     * @param expirationDate
+     * extended getter'ы & setter'ы
      */
-    public Warehouse(TradeDepartment tradeDepartment, Article article, Date gotToStore, Date productionDate, Date expirationDate) {
-        this.tradeDepartment = tradeDepartment;
-        this.article = article;
-        this.gotToStore = gotToStore;
-        this.productionDate = productionDate;
-        this.expirationDate = expirationDate;
+
+    @JsonIgnore
+    public Set<Article> getArticles() {
+        return this.articles;
     }
 }

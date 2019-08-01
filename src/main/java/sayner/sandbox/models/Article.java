@@ -1,18 +1,20 @@
 package sayner.sandbox.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sayner.sandbox.jsontemplate.jview.ArticleView;
 import sayner.sandbox.models.enums.ArticleState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Класс представляет собой каталог
@@ -27,10 +29,14 @@ import java.util.Objects;
 // By default: @SQLDelete(sql = "DELETE from Articles_List WHERE id = ?", check = ResultCheckStyle.COUNT)
 @NamedQuery(name = "Article.FindByName", query = "from Article a WHERE a.name like :name")
 @Table(name = "Articles_List")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Log4j2
 public class Article {
-
-    @Transient
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Индентификатор БД
@@ -38,8 +44,7 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    @JsonView(ArticleView.Id.class)
-    private int id;
+    private Integer id;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -49,140 +54,58 @@ public class Article {
      * Наименование товара
      */
     @Column
-    @JsonView(ArticleView.IdTitle.class)
     private String title;
 
     /**
      * Производитель
      */
     @Column
-    @JsonView({ArticleView.IdTitleManufacturer.class, ArticleView.Id.class})
     private String manufacturer;
 
     /**
      * Имя, данное производителем изделия
      */
     @Column
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
     private String name;
 
     /**
      * Масса в СИ
      */
     @Column
-    @JsonView(ArticleView.FullArticle.class)
-    private double mass_si;
+    private Double massSi;
 
     /**
      * Гарантия
      */
     @Column
-    @JsonView(ArticleView.IdTitleManufacturerNameGarantee.class)
-    private String garantee;
+    private String guarantee;
 
     @Column(updatable = false, name = "creation_date_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-dd-MM HH:mm")
-    @JsonView(ArticleView.IdTitleDate.class)
     private LocalDateTime creationDateTime;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "Article_Warehouse",
+            joinColumns = {@JoinColumn(name = "article_id")},
+            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+    )
+    private Set<Warehouse> warehouses;
+
     /**
-     * getter'ы & setter'ы
+     * extended getter'ы & setter'ы
      */
-    // Сначала getter'ы
-    public int getId() {
-        return id;
-    }
 
     public String getStringId() {
         return String.valueOf(getId());
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getMass_si() {
-        return mass_si;
-    }
-
-    public String getGarantee() {
-        return garantee;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    // Теперь setter'ы
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMass_si(double mass_si) {
-        this.mass_si = mass_si;
-    }
-
-    public void setGarantee(String garantee) {
-        this.garantee = garantee;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public ArticleState getState() {
-        return state;
-    }
-
-    public void setState(ArticleState state) {
-        this.state = state;
-    }
-
-    @PreRemove
-    public void deleteAnArticle() {
-        logger.info("Set to state DELETED");
-        this.setState(ArticleState.DELETED);
-    }
-
-    /**
-     * Default конструктор
-     */
-    public Article() {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.trace("Конструктор без аргументов класса {}", Article.class);
+    public Set<Warehouse> getWarehouses() {
+        return this.warehouses;
     }
 
     /**
@@ -195,13 +118,13 @@ public class Article {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = title + "_" + manufacturer;
-        this.mass_si = 1;
-        this.garantee = "нет";
+        this.massSi = 1d;
+        this.guarantee = "нет";
+        this.setWarehouses(null);
     }
 
     /**
-     * Конструкор устанавливает разом все параметры, кроме id
-     * т.к. он инкреминтируется автоматически на уровне СУБД
+     * Конструкор устанавливает некоторые параметры
      *
      * @param title
      * @param manufacturer
@@ -209,34 +132,53 @@ public class Article {
      * @param mass_si
      * @param garantee
      */
-    public Article(String title, String manufacturer, String name, double mass_si, String garantee) {
+    public Article(String title, String manufacturer, String name, double mass_si, String garantee, Set<Warehouse> warehouses) {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = name;
-        this.mass_si = mass_si;
-        this.garantee = garantee;
+        this.massSi = mass_si;
+        this.guarantee = garantee;
+        this.setWarehouses(warehouses);
     }
 
     /**
-     * Устанавливает вообще всё. Очень нужен был
+     * Конструкор устанавливает некоторые параметры + дата создания
      *
-     * @param id
      * @param title
      * @param manufacturer
      * @param name
      * @param mass_si
      * @param garantee
      */
-    public Article(int id, String title, String manufacturer, String name, double mass_si, String garantee) {
-        this.id = id;
+    public Article(String title, String manufacturer, String name, double mass_si, String garantee, Set<Warehouse> warehouses, LocalDateTime creationDateTime) {
         this.title = title;
         this.manufacturer = manufacturer;
         this.name = name;
-        this.mass_si = mass_si;
-        this.garantee = garantee;
+        this.massSi = mass_si;
+        this.guarantee = garantee;
+        this.setWarehouses(warehouses);
+        this.creationDateTime = creationDateTime;
     }
 
+    /**
+     * logic
+     */
 
+    @PreRemove
+    public void deleteAnArticle() {
+        log.info("Set to state DELETED");
+        this.setState(ArticleState.DELETED);
+    }
+
+    /**
+     * Overrides
+     */
+
+    /**
+     * Возращает основные поля
+     *
+     * @return
+     */
     @Override
     public String toString() {
 
@@ -255,13 +197,19 @@ public class Article {
                 this.manufacturer,
                 this.name,
                 this.id,
-                this.garantee,
-                this.mass_si,
+                this.guarantee,
+                this.massSi,
                 this.creationDateTime,
                 this.updatedAt
         );
     }
 
+    /**
+     * Осталось с датой решить
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -280,11 +228,11 @@ public class Article {
                 return false;
             if (!this.name.equals(anotherArticle.name))
                 return false;
-            if (this.mass_si != anotherArticle.mass_si)
+            if (this.massSi != anotherArticle.massSi)
                 return false;
             // если они оба null, то считается как соответвие, и проверка идёт дальше
-            if (this.garantee != null && anotherArticle.garantee != null) { //проверка на null
-                if (!this.garantee.equals(anotherArticle.garantee)) //проверка на соответствие
+            if (this.guarantee != null && anotherArticle.guarantee != null) { //проверка на null
+                if (!this.guarantee.equals(anotherArticle.guarantee)) //проверка на соответствие
                     return false;
             }
 //            if (this.creationDateTime != anotherArticle.creationDateTime)

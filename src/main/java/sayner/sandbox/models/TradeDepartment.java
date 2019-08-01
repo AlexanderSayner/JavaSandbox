@@ -1,6 +1,12 @@
 package sayner.sandbox.models;
 
-import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+
+import javax.persistence.*;
 
 /**
  * Класс представляет собой отделения магазина
@@ -9,69 +15,36 @@ import javax.persistence.ManyToOne;
  * <p>
  * #2
  */
+@Entity
+@Table(name = "Trade_Departments")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Log4j2
 public class TradeDepartment {
 
     /**
      * Индентификатор БД
      */
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trade_department_id")
+    private Integer id;
 
     /**
      * Предназначение
      */
+    @Column
     private String appointment;
 
-    /**
-     * Магазин, в котором располагается отдел
-     * id_branch_shops
-     */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_shop_id")
     private BranchShop branchShop;
 
-
-    /**
-     * getter'ы & setter'ы
-     */
-    // Сначала getter'ы
-    public int getId() {
-        return id;
-    }
-
-    public BranchShop getBranchShop() {
-        return branchShop;
-    }
-
-    public String getAppointment() {
-        return appointment;
-    }
-
-    // Теперь setter'ы
-
-    public void setBranchShop(BranchShop branchShop) {
+    public TradeDepartment(String appointment, BranchShop branchShop) {
+        this.appointment = appointment;
         this.branchShop = branchShop;
     }
-
-    public void setAppointment(String appointment) {
-        this.appointment = appointment;
-    }
-
-    /**
-     * Default конструктор
-     */
-    public TradeDepartment() {
-    }
-
-    /**
-     * Конструктор устанавливает магазин, в котором располагается отдел и его название
-     * т.к. он инкреминтируется автоматически на уровне СУБД
-     *
-     * @param shopId
-     * @param appointment
-     */
-    public TradeDepartment(int shopId, String appointment) {
-        this.branchShop = new BranchShop(shopId,"","","","");
-        this.appointment = appointment;
-    }
-
 
 }
