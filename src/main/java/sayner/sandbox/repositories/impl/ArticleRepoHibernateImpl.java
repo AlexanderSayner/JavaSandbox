@@ -115,7 +115,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
 //        log.info(article.getWarehouses().toString());
 
-        Hibernate.initialize(article.getWarehouses());
+        this.initializeAndUnproxy(article.getWarehouses());
 
         session.getTransaction().commit();
         session.close();
@@ -573,6 +573,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         // if i use session.load(), i should do this:
 //        log.info(article.toString());
         // probably session.load() loads proxy object
+
 
         log.info("=== Commit ===");
         session.getTransaction().commit();

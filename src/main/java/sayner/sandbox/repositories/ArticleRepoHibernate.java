@@ -5,7 +5,7 @@ import sayner.sandbox.models.Article;
 
 import java.util.List;
 
-public interface ArticleRepoHibernate {
+public interface ArticleRepoHibernate extends RootRepoHibernate {
 
     Article findById(int id) throws ThereIsNoSuchArticleException;
 

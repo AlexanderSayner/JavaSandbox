@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.joda.time.LocalDateTime;
 
@@ -56,7 +57,7 @@ public class Warehouse {
     @Column
     private LocalDateTime expirationDate;
 
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
     private Set<Article> articles;
 
