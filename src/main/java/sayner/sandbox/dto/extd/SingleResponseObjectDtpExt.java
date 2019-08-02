@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Log4j2
-public final class SingleResponseObjectDtoExtd<T> extends SingleResponseObjectDto {
+public final class SingleResponseObjectDtpExt<T> extends SingleResponseObjectDto {
 
     @JsonView(SingleResponseObjectDtoView.StatusCode.class)
     private StatusCodeEnum statusCode;
@@ -49,7 +49,7 @@ public final class SingleResponseObjectDtoExtd<T> extends SingleResponseObjectDt
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime operationDateAndTime;
 
-    public SingleResponseObjectDtoExtd(StatusEnum status, String message, Boolean success, T dataOrException) {
+    public SingleResponseObjectDtpExt(StatusEnum status, String message, Boolean success, T dataOrException) {
 
         this.statusCode = super.getErrorCodeEnum(status);
         this.message = message;

@@ -529,7 +529,7 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         Integer lastId = this.getLastIdFromArticles();
         log.info("=== Last id is " + lastId + "===");
 
-        int counter = lastId + 1000;
+        int counter = lastId + 100;
         while (--counter > lastId) {
 
             session.getTransaction().begin();

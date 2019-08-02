@@ -19,4 +19,7 @@ public enum StatusEnum {
     CouldNotTransferWarehouseToWarehouseDTO,
     CouldNotTransferWarehouseDTOToWarehouse,
     AnyOtherShit,
+
+    Unauthorized,
+    NoAccess
 }

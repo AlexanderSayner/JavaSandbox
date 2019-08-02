@@ -29,6 +29,8 @@ public abstract class SingleResponseObjectDto {
         errorCodeEnum.put(StatusEnum.CouldNotTransferWarehouseToWarehouseDTO,StatusCodeEnum.StatusCode6103);
         errorCodeEnum.put(StatusEnum.CouldNotTransferWarehouseDTOToWarehouse,StatusCodeEnum.StatusCode6104);
         errorCodeEnum.put(StatusEnum.AnyOtherShit,StatusCodeEnum.StatusCode6666);
+        errorCodeEnum.put(StatusEnum.Unauthorized,StatusCodeEnum.StatusCode401);
+        errorCodeEnum.put(StatusEnum.NoAccess,StatusCodeEnum.StatusCode403);
     }
 
     protected StatusCodeEnum getErrorCodeEnum(StatusEnum statusEnum) {

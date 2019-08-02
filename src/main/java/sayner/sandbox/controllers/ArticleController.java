@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
 import sayner.sandbox.dto.SingleResponseObjectDto;
 import sayner.sandbox.dto.StatusEnum;
-import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
 import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
@@ -47,10 +47,10 @@ public class ArticleController {
 
 
     @GetMapping(value = "/cache")
-    public SingleResponseObjectDtoExtd<Object> getMyCacheTesting() throws IOException {
+    public SingleResponseObjectDtpExt<Object> getMyCacheTesting() throws IOException {
 
         this.articleService.cacheChecking();
-        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Cache test has started", true, null);
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Cache test has started", true, null);
     }
 
     /**
@@ -60,7 +60,7 @@ public class ArticleController {
      */
     @GetMapping
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
-    public SingleResponseObjectDtoExtd<Object> getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDtpExt<Object> getAllArticlesTest() throws IOException {
 
 
         Warehouse warehouse = new Warehouse();
@@ -89,7 +89,7 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
 //        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }

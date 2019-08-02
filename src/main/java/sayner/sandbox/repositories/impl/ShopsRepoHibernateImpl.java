@@ -115,7 +115,7 @@ public class ShopsRepoHibernateImpl implements ShopsRepoHibernate {
         log.info("=== Open the session ===");
         Session session = this.sessionFactory.openSession();
 
-        int counter = 1000;
+        int counter = 100;
         while (--counter > 0) {
 
             log.info("=== Begin transaction ===");
