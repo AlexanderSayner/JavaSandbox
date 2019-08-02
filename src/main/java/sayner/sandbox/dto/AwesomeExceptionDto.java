@@ -1,4 +1,4 @@
-package sayner.sandbox.exceptions.handler;
+package sayner.sandbox.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import sayner.sandbox.jsontemplate.jview.AwesomeExceptionView;
@@ -6,7 +6,7 @@ import sayner.sandbox.jsontemplate.jview.AwesomeExceptionView;
 /**
  * Вот это штука пойдёт в json
  */
-public class AwesomeException {
+public class AwesomeExceptionDto {
 
     @JsonView(AwesomeExceptionView.Message.class)
     private String message;
@@ -17,10 +17,10 @@ public class AwesomeException {
     /**
      *
      */
-    public AwesomeException() {
+    public AwesomeExceptionDto() {
     }
 
-    public AwesomeException(String message) {
+    public AwesomeExceptionDto(String message) {
         this.message = message;
         this.smthg = "Ещё что-то";
     }
