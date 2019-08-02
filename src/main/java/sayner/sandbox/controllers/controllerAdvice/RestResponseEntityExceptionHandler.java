@@ -1,5 +1,6 @@
 package sayner.sandbox.controllers.controllerAdvice;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
 import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
+import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import java.io.IOException;
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler implements AccessDeniedHandler {
 
     @ExceptionHandler({ThereIsNoSuchArticleException.class})
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithAwesomeException.class)
     public SingleResponseObjectDto handleThereIsNoSuchArticleException(ThereIsNoSuchArticleException tinsae) throws IOException {
 
         SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtpExt<>(
@@ -34,6 +37,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler({NotFoundByIdException.class})
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithAwesomeException.class)
     public SingleResponseObjectDto handleNotFoundById(NotFoundByIdException nfbie) throws IOException {
 
         SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtpExt<>(
@@ -45,7 +49,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         return stringSingleResponseObjectDto;
     }
-
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

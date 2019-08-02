@@ -26,7 +26,10 @@ public class SingleResponseObjectDtoView {
     public interface StatusCodeMessageSuccessDataOrException extends StatusCodeMessageSuccess {
     }
 
-    public interface StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime extends StatusCodeMessageSuccessDataOrException, ArticleViewDto.FullArticle {
+    public interface StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithArticle extends StatusCodeMessageSuccessDataOrException, ArticleViewDto.FullArticle {
+    }
+
+    public interface StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithAwesomeException extends StatusCodeMessageSuccessDataOrException, AwesomeExceptionView.FullAwesomeException {
     }
 
     public interface StatusCodeMessageDataOrException extends StatusCodeMessage {

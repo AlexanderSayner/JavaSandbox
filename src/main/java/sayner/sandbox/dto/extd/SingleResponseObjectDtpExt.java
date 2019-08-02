@@ -43,7 +43,7 @@ public final class SingleResponseObjectDtpExt<T> extends SingleResponseObjectDto
 
     @JsonView({
             SingleResponseObjectDtoView.OperationDateAndTime.class,
-            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class
+            SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithArticle.class
     })
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
