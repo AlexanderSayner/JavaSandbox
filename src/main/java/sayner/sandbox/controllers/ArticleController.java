@@ -5,18 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
 import sayner.sandbox.dto.SingleResponseObjectDto;
 import sayner.sandbox.dto.StatusEnum;
-import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
 import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
-import sayner.sandbox.jsontemplate.ModelResponse;
-import sayner.sandbox.jsontemplate.ResponseHandler;
 import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
 import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 import sayner.sandbox.mappers.ArticleMapper;
@@ -41,16 +37,14 @@ import java.util.Set;
 @Log4j2
 public class ArticleController {
 
+    private final ArticleMapper articleMapper = ArticleMapper.INSTANCE;
     private final ArticleService articleService;
 
-    private final ModelResponse modelResponse;
-
-
     @GetMapping(value = "/cache")
-    public SingleResponseObjectDtoExtd<Object> getMyCacheTesting() throws IOException {
+    public SingleResponseObjectDtpExt<Object> getMyCacheTesting() throws IOException {
 
         this.articleService.cacheChecking();
-        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Cache test has started", true, null);
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Cache test has started", true, null);
     }
 
     /**
@@ -60,7 +54,7 @@ public class ArticleController {
      */
     @GetMapping
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
-    public SingleResponseObjectDtoExtd<Object> getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDto getAllArticlesTest() throws IOException {
 
 
         Warehouse warehouse = new Warehouse();
@@ -89,9 +83,9 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        return new SingleResponseObjectDtoExtd(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
-//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
-//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
+
+        return singleResponseObjectDto;
     }
 
     /**
@@ -105,9 +99,7 @@ public class ArticleController {
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
     public SingleResponseObjectDto getArticle(@PathVariable int id) throws NotFoundByIdException {
 
-        ArticleMapper articleMapper = ArticleMapper.INSTANCE;
-
-        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtoExtd<>(
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
                 "Вот вам Article",
                 true,
@@ -141,24 +133,31 @@ public class ArticleController {
      */
     @GetMapping(value = "/session", params = {"name"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
-    public ResponseEntity<Object> getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
+    public SingleResponseObjectDto getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
 
-        ResponseHandler responseHandler = new ResponseHandler();
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "Success. What about any hibernate sessions?",
+                true,
+                articleMapper.toArticleDTOs(articleService.getArticlesUsingCriteriaSession(name))
+        );
 
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success. What about any hibernate sessions?",
-                articleService.getArticlesUsingCriteriaSession(name));
+        return singleResponseObjectDto;
     }
 
     @GetMapping(value = "/session", params = {"manufacturer"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
-    public ResponseEntity<Object> getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
+    public SingleResponseObjectDto getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
 
-        ResponseHandler responseHandler = new ResponseHandler();
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                true,
+                articleMapper.toArticleDTOs(articleService.getArticlesLikeManufacturerUsingCriteriaSession(manufacturer))
+        );
 
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleService.getArticlesLikeManufacturerUsingCriteriaSession(manufacturer));
+        return singleResponseObjectDto;
     }
-
 
     /**
      * Фильтрация с использованием CriteriaBuilder
@@ -167,13 +166,17 @@ public class ArticleController {
      */
     @GetMapping(value = "/criteria", params = {"by", "value"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
-    public ResponseEntity<Object> getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
-                                                         @RequestParam("value") String value) {
+    public SingleResponseObjectDto getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
+                                                          @RequestParam("value") String value) {
 
-        ResponseHandler responseHandler = new ResponseHandler();
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                true,
+                articleMapper.toArticleDTOs(articleService.criterian(filtered_by, value))
+        );
 
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleService.criterian(filtered_by, value));
+        return singleResponseObjectDto;
     }
 
     /**
@@ -242,16 +245,18 @@ public class ArticleController {
      */
     @GetMapping(params = {"name"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
-    public ResponseEntity<Object> filterByName(
+    public SingleResponseObjectDto filterByName(
             @RequestParam("name") String name
     ) {
-        ResponseHandler responseHandler = new ResponseHandler();
 
-//        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-//                articleService.findArticlesByName(name));
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                true,
+                articleMapper.toArticleDTOs(articleService.findArticleLikeName(name))
+        );
 
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleService.findArticleLikeName(name));
+        return singleResponseObjectDto;
     }
 
     /**

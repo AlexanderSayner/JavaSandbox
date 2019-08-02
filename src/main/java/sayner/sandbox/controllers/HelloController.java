@@ -1,29 +1,28 @@
 package sayner.sandbox.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sayner.sandbox.jsontemplate.ModelResponse;
+import sayner.sandbox.dto.SingleResponseObjectDto;
+import sayner.sandbox.dto.StatusEnum;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
+import sayner.sandbox.services.ArticleService;
 import sayner.sandbox.services.BranchShopService;
-import sayner.sandbox.services.impl.ArticleServiceImpl;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @RestController
 @RequestMapping("/")
 @Log4j2
 public class HelloController {
 
-    @Autowired
-    private ModelResponse modelResponse;
-    @Autowired
-    private ArticleServiceImpl articleService;
-    @Autowired
-    private BranchShopService branchShopService;
+    private final ArticleService articleService;
+
+    private final BranchShopService branchShopService;
 
     @RequestMapping("/hello")
     public String sayHi() {
@@ -31,7 +30,7 @@ public class HelloController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> fillTheDatabase() throws IOException {
+    public SingleResponseObjectDto fillTheDatabase() throws IOException {
 
         log.info("=== Starting to fill the database ===");
 
@@ -59,7 +58,14 @@ public class HelloController {
             }
         }
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", new DtoClassWithData("operation complete"), null);
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "Вот вам Article",
+                true,
+                new DtoClassWithData("operation complete")
+        );
+
+        return singleResponseObjectDto;
     }
 
 }

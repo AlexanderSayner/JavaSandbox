@@ -4,12 +4,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import sayner.sandbox.dto.SingleResponseObjectDto;
 import sayner.sandbox.dto.StatusEnum;
-import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
 import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 
@@ -24,7 +22,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({ThereIsNoSuchArticleException.class})
     public SingleResponseObjectDto handleThereIsNoSuchArticleException(ThereIsNoSuchArticleException tinsae) throws IOException {
 
-        SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtoExtd<>(
+        SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.ArticleEntityIsNull,
                 "Article не найден",
                 false,
@@ -37,7 +35,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({NotFoundByIdException.class})
     public SingleResponseObjectDto handleNotFoundById(NotFoundByIdException nfbie) throws IOException {
 
-        SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtoExtd<>(
+        SingleResponseObjectDto stringSingleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.ArticleIdDoesNotExist,
                 "Такого Id не существует",
                 false,
