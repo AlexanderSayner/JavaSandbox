@@ -35,14 +35,14 @@ public class HelloController {
 
         log.info("=== Starting to fill the database ===");
 
-        Thread articleThread = new Thread(() -> articleService.fillTheDatabase());
         Thread shopsThread = new Thread(() -> branchShopService.fillTheDatabase());
+        Thread articleThread = new Thread(() -> articleService.fillTheDatabase());
 
         // Создаём побочные потоки и наслаждаемся быстрым откликом приложения
-        articleThread.start();
         shopsThread.start();
+        articleThread.start();
 
-        log.info("=== Entities have added to the database ===");
+        log.info("=== Process adding entities to the database has started===");
 
         class DtoClassWithData {
             private String status;

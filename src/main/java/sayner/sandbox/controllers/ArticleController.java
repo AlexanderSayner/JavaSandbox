@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
+import sayner.sandbox.dto.SingleResponseObjectDto;
 import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.dto.extd.SingleResponseObjectDtoExtd;
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
@@ -101,28 +103,33 @@ public class ArticleController {
      */
     @GetMapping(value = "/{id}")
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
-    public ResponseEntity<Object> getArticle(@PathVariable int id) {
-        ResponseHandler responseHandler = new ResponseHandler();
+    public SingleResponseObjectDto getArticle(@PathVariable int id) throws NotFoundByIdException {
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        Article articleOne = articleService.getAnArticle(id);
-        Article articleTwo = articleService.getAnArticle(id);
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtoExtd<>(
+                StatusEnum.AllDoneWell,
+                "Вот вам Article",
+                true,
+                articleMapper.toArticleDTO(articleService.getAnArticle(id))
+        );
 
-        System.out.println("The first one" + articleOne.toString());
-        System.out.println("The second one" + articleTwo.toString());
+//        Article articleOne = articleService.getAnArticle(id);
+//        Article articleTwo = articleService.getAnArticle(id);
+//
+//        System.out.println("The first one" + articleOne.toString());
+//        System.out.println("The second one" + articleTwo.toString());
+//
+//        System.out.println(articleOne.getCreationDateTime());
+//        System.out.println(articleTwo.getCreationDateTime());
+//
+//        System.out.println("СРАВНЕНИЕ equals");
+//        System.out.println(articleTwo.equals(articleOne));
+//
+//        System.out.println("СРАВНЕНИЕ hashCode");
+//        System.out.println(articleTwo.hashCode() == articleOne.hashCode());
 
-        System.out.println(articleOne.getCreationDateTime());
-        System.out.println(articleTwo.getCreationDateTime());
-
-        System.out.println("СРАВНЕНИЕ equals");
-        System.out.println(articleTwo.equals(articleOne));
-
-        System.out.println("СРАВНЕНИЕ hashCode");
-        System.out.println(articleTwo.hashCode() == articleOne.hashCode());
-
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleMapper.toArticleDTO(articleService.getAnArticle(id)));
+        return singleResponseObjectDto;
 
     }
 

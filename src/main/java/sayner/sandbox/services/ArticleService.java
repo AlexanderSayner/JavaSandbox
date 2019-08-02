@@ -1,6 +1,7 @@
 package sayner.sandbox.services;
 
 import org.springframework.data.domain.Page;
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 
@@ -18,7 +19,7 @@ public interface ArticleService {
 
     List<Article> criterian(String filtered_by, String value);
 
-    Article getAnArticle(int id);
+    Article getAnArticle(int id) throws NotFoundByIdException;
 
     List<Article> getArticlesUsingCriteriaSession(String name);
 
