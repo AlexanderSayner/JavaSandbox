@@ -6,18 +6,16 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import sayner.sandbox.exceptions.handler.AuthenticationExceptionHandler;
 import sayner.sandbox.models.User;
 import sayner.sandbox.repositories.UserDetailsRepo;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Configuration
 @EnableWebSecurity
 @EnableOAuth2Sso
@@ -25,18 +23,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationExceptionHandler authenticationExceptionHandler;
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("awesomeUser").password(new BCryptPasswordEncoder().encode("1234")).roles("a_mere_mortals")
-                .and()
-                .withUser("niceUser").password(new BCryptPasswordEncoder().encode("123")).roles("a_mere_mortals")
-                .and()
-                .withUser("admin").password(new BCryptPasswordEncoder().encode("12345")).roles("GODLiKE")
-        ;
-    }
-
-
+//    @Override
+//    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication()
+//                .withUser("awesomeUser").password(new BCryptPasswordEncoder().encode("1234")).roles("a_mere_mortals")
+//                .and()
+//                .withUser("niceUser").password(new BCryptPasswordEncoder().encode("123")).roles("a_mere_mortals")
+//                .and()
+//                .withUser("admin").password(new BCryptPasswordEncoder().encode("12345")).roles("GODLiKE")
+//        ;
+//    }
+//
 //    // HTTP Basic authorization :
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {
@@ -52,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .exceptionHandling()
 //                .authenticationEntryPoint(authenticationExceptionHandler)
-//                .accessDeniedHandler(new CustomAccessDeniedHandler()
+//                .accessDeniedHandler(new CustomAccessDeniedHandler())
 //        ;
 //    }
 

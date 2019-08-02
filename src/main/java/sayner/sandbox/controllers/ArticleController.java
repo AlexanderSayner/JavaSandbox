@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
@@ -37,8 +39,10 @@ import java.util.Set;
 @Log4j2
 public class ArticleController {
 
-    private final ArticleMapper articleMapper = ArticleMapper.INSTANCE;
+    ArticleMapper articleMapper = ArticleMapper.INSTANCE;
+
     private final ArticleService articleService;
+
 
     @GetMapping(value = "/cache")
     public SingleResponseObjectDtpExt<Object> getMyCacheTesting() throws IOException {
@@ -54,7 +58,7 @@ public class ArticleController {
      */
     @GetMapping
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
-    public SingleResponseObjectDto getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDtpExt<Object> getAllArticlesTest() throws IOException {
 
 
         Warehouse warehouse = new Warehouse();
@@ -83,9 +87,7 @@ public class ArticleController {
         List<Article> articleList = new ArrayList<>();
         articleList.add(article);
 
-        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
-
-        return singleResponseObjectDto;
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
     }
 
     /**
@@ -151,13 +153,14 @@ public class ArticleController {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
-                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                "Success. What about any hibernate sessions?",
                 true,
                 articleMapper.toArticleDTOs(articleService.getArticlesLikeManufacturerUsingCriteriaSession(manufacturer))
         );
 
         return singleResponseObjectDto;
     }
+
 
     /**
      * Фильтрация с использованием CriteriaBuilder
@@ -167,11 +170,11 @@ public class ArticleController {
     @GetMapping(value = "/criteria", params = {"by", "value"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public SingleResponseObjectDto getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
-                                                          @RequestParam("value") String value) {
+                                                         @RequestParam("value") String value) {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
-                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                "Success. What about any hibernate sessions?",
                 true,
                 articleMapper.toArticleDTOs(articleService.criterian(filtered_by, value))
         );
@@ -251,7 +254,7 @@ public class ArticleController {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
-                "getSomeArticlesByntityFactoryManagerCriteriaSession has done well",
+                "Success. What about any hibernate sessions?",
                 true,
                 articleMapper.toArticleDTOs(articleService.findArticleLikeName(name))
         );
