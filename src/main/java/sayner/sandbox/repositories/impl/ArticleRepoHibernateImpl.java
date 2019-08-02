@@ -1,14 +1,14 @@
 package sayner.sandbox.repositories.impl;
 
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
-import sayner.sandbox.exceptions.ThereIsNullId;
+import sayner.sandbox.exceptions.ThereIsNullIdException;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.models.Warehouse;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
@@ -85,35 +85,38 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         Query<Article> articleQuery = session.createQuery(criteriaQuery).setMaxResults(1);
         List<Article> articleList = articleQuery.getResultList();
-        Article article = articleList.get(0);
-        Integer integerId = article.getId();
+
+        Integer integerId = 1;
+
+        if (!articleList.isEmpty()) {
+            Article article = articleList.get(0);
+            integerId = article.getId();
+        }
 
         lastId = Optional.of(integerId);
 
         session.getTransaction().commit();
         session.close();
 
-        Integer resultId = lastId.orElseThrow(ThereIsNullId::new);
+        Integer resultId = lastId.orElseThrow(ThereIsNullIdException::new);
 
         return resultId;
     }
 
     @Override
-    public Article findById(int id) {
+    public Article findById(int id) throws NotFoundByIdException {
 
         Session session = this.sessionFactory.openSession();
         session.getTransaction().begin();
 
-        Article article = session.load(Article.class, id);
+        Article article = session.get(Article.class, id);
 
         if (article == null) {
             log.error("Check ThereIsNoSuchArticleException() in ArticleRepoHibernateImpl.findById(" + id + ")");
             session.getTransaction().rollback();
             session.close();
-            throw new ThereIsNoSuchArticleException();
+            throw new NotFoundByIdException();
         }
-
-//        log.info(article.getWarehouses().toString());
 
         this.initializeAndUnproxy(article.getWarehouses());
 

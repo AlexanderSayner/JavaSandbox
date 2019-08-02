@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
@@ -96,7 +97,7 @@ public class ArticleServiceImpl implements ArticleService {
             isolation = Isolation.SERIALIZABLE,
             propagation = Propagation.REQUIRED
     )
-    public Article getAnArticle(int id) {
+    public Article getAnArticle(int id) throws NotFoundByIdException {
 
         Article articleFromDB = new Article();
 

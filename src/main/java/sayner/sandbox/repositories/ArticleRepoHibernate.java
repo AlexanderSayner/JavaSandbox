@@ -1,5 +1,6 @@
 package sayner.sandbox.repositories;
 
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface ArticleRepoHibernate extends RootRepoHibernate {
 
-    Article findById(int id) throws ThereIsNoSuchArticleException;
+    Article findById(int id) throws NotFoundByIdException;
 
     List<Article> findAllLikeNameOrderByTitleUsingCriteriaQuery(String name) throws ThereIsNoSuchArticleException;
 
