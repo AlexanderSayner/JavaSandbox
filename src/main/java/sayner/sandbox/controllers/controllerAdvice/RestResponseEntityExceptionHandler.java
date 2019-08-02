@@ -5,6 +5,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import sayner.sandbox.dto.AwesomeExceptionDto;
 import sayner.sandbox.dto.SingleResponseObjectDto;
 import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
@@ -26,7 +27,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 StatusEnum.ArticleEntityIsNull,
                 "Article не найден",
                 false,
-                ThereIsNoSuchArticleException.class
+                new AwesomeExceptionDto(ThereIsNoSuchArticleException.class.toString(), tinsae.getMessage(), tinsae)
         );
 
         return stringSingleResponseObjectDto;
@@ -39,17 +40,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 StatusEnum.ArticleIdDoesNotExist,
                 "Такого Id не существует",
                 false,
-                NotFoundByIdException.class
+                new AwesomeExceptionDto(NotFoundByIdException.class.toString(), nfbie.getMessage(), nfbie)
         );
 
         return stringSingleResponseObjectDto;
     }
 
 
-
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-
 
     }
 
