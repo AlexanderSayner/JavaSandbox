@@ -85,8 +85,13 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
 
         Query<Article> articleQuery = session.createQuery(criteriaQuery).setMaxResults(1);
         List<Article> articleList = articleQuery.getResultList();
-        Article article = articleList.get(0);
-        Integer integerId = article.getId();
+
+        Integer integerId = 1;
+
+        if (!articleList.isEmpty()) {
+            Article article = articleList.get(0);
+            integerId = article.getId();
+        }
 
         lastId = Optional.of(integerId);
 
