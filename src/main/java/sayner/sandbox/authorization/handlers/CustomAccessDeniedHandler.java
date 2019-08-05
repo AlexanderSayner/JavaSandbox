@@ -22,14 +22,18 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String informString="User: " + auth.getName()
+        String informString = "User: " + auth.getName()
                 + " attempted to access the protected URL: "
                 + request.getRequestURI();
         if (auth != null) {
             log.warn(informString);
         }
 
-        SingleResponseObjectDtpExt<Object> singleResponseObjectDtpExt = new SingleResponseObjectDtpExt<>(StatusEnum.NoAccess, "Нет доступа", false, informString);
+        SingleResponseObjectDtpExt<Object> singleResponseObjectDtpExt = new SingleResponseObjectDtpExt<>(
+                StatusEnum.NoAccess,
+                "Нет доступа",
+                false,
+                response.getStatus());
 
         ObjectMapper mapper = new ObjectMapper();
         response.setCharacterEncoding("UTF-8");

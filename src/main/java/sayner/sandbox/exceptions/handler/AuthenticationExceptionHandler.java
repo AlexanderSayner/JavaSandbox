@@ -1,13 +1,12 @@
 package sayner.sandbox.exceptions.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import sayner.sandbox.dto.StatusEnum;
 import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
-import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,31 +14,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
-
+@NoArgsConstructor
 @Component
 public class AuthenticationExceptionHandler implements AuthenticationEntryPoint, Serializable {
+
+    private Boolean isForbidden = false;
+
+    public AuthenticationExceptionHandler(Boolean isForbidden) {
+        this.isForbidden = isForbidden;
+    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
-        StatusEnum my_status;
+        StatusEnum my_status = StatusEnum.Unauthorized;
 
-        switch (response.getStatus()) {
-
-            case 403:
-                my_status = StatusEnum.NoAccess;
-                break;
-
-            default:
-                my_status = StatusEnum.Unauthorized;
-                break;
-
+        if (this.isForbidden) {
+            my_status = StatusEnum.NoAccess;
         }
 
-        SingleResponseObjectDtpExt<Object> singleResponseObjectDtpExt = new SingleResponseObjectDtpExt<>(my_status, "Нет доступа", false, authException.getMessage());
+        SingleResponseObjectDtpExt<Object> singleResponseObjectDtpExt = new SingleResponseObjectDtpExt<>(
+                my_status, "Нет доступа или указаны неверные данные пользователя, response status: " + response.getStatus(), false, authException.getMessage());
 
         ObjectMapper mapper = new ObjectMapper();
         response.setCharacterEncoding("UTF-8");

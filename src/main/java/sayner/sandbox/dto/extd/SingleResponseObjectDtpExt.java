@@ -41,12 +41,11 @@ public final class SingleResponseObjectDtpExt<T> extends SingleResponseObjectDto
     })
     private T dataOrException;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     @JsonView({
             SingleResponseObjectDtoView.OperationDateAndTime.class,
             SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithArticle.class
     })
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime operationDateAndTime;
 
     public SingleResponseObjectDtpExt(StatusEnum status, String message, Boolean success, T dataOrException) {

@@ -56,7 +56,7 @@ public class ArticleController {
      */
     @GetMapping
     @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTimeWithArticle.class)
-    public SingleResponseObjectDtpExt<Object> getAllArticlesTest() throws IOException {
+    public SingleResponseObjectDtpExt<Object> getAllArticlesTest() throws IOException, NoSuchMethodException {
 
 
         Warehouse warehouse = new Warehouse();
@@ -168,7 +168,7 @@ public class ArticleController {
     @GetMapping(value = "/criteria", params = {"by", "value"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public SingleResponseObjectDto getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
-                                                         @RequestParam("value") String value) {
+                                                          @RequestParam("value") String value) {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
