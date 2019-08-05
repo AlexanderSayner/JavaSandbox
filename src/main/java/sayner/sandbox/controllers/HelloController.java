@@ -24,7 +24,7 @@ public class HelloController {
 
     private final BranchShopService branchShopService;
 
-    @RequestMapping("/hello")
+    @GetMapping("/hello")
     public String sayHi() {
         return "Hi";
     }
@@ -60,7 +60,7 @@ public class HelloController {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
-                "Вот вам Article",
+                "Механизм заполнения базы запущем",
                 true,
                 new DtoClassWithData("operation complete")
         );
