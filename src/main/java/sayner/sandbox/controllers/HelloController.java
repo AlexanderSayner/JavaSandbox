@@ -21,7 +21,6 @@ import java.io.IOException;
 public class HelloController {
 
     private final ArticleService articleService;
-
     private final BranchShopService branchShopService;
 
     @GetMapping("/hello")
@@ -46,9 +45,6 @@ public class HelloController {
         class DtoClassWithData {
             private String status;
 
-            public DtoClassWithData() {
-            }
-
             public DtoClassWithData(String status) {
                 this.status = status;
             }
@@ -67,5 +63,4 @@ public class HelloController {
 
         return singleResponseObjectDto;
     }
-
 }
