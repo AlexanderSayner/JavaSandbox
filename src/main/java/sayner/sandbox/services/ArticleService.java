@@ -1,6 +1,7 @@
 package sayner.sandbox.services;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.models.Article;
@@ -15,6 +16,7 @@ public interface ArticleService {
 
     void deleteArticle(int id) throws ThereIsNoSuchArticleException;
 
+    @Secured("GODLikE")
     List<Article> getAllArticles();
 
     List<Article> criterian(String filtered_by, String value);

@@ -25,9 +25,9 @@ public class UserController {
 
     @Secured(ROLE_GODLIKE)
     @GetMapping
-    public SingleResponseObjectDto getUsersList() throws IOException{
+    public SingleResponseObjectDto getUsersList() throws IOException {
 
-        SingleResponseObjectDto singleResponseObjectDto=new SingleResponseObjectDtpExt<Object>(
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<Object>(
                 StatusEnum.AllDoneWell,
                 "Список пользователелй из бд",
                 true,

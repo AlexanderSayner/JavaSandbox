@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @EnableWebSecurity
 @EnableOAuth2Sso
 @EnableGlobalMethodSecurity(securedEnabled = true)
-
 public class RestWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapter {
 
 //    @Override
@@ -60,7 +59,7 @@ public class RestWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapte
                 .csrf().disable()
                 .anonymous().disable()
                 .authorizeRequests()
-                .antMatchers("/articles*/**").hasRole("GODLiKE")
+//                .antMatchers("/articles*/**").hasRole("GODLiKE")
                 .antMatchers("/hello").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -76,7 +75,6 @@ public class RestWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapte
             String stringId = (String) map.get("sub");
             User user = userDetailsRepo.findById(stringId).orElseGet(() -> {
                 User newUser = new User();
-
                 newUser.setId(stringId);
                 newUser.setName((String) map.get("name"));
                 newUser.setEmail((String) map.get("email"));
