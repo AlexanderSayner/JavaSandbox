@@ -14,15 +14,15 @@ import sayner.sandbox.services.UserService;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
-@Service
+@Service(value = "userService")
+@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
 @Log4j2
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public List<User> getAllUsers() throws NullPointerException {
-        return userRepo.getAllUsers();
+        return this.userRepo.getAllUsers();
     }
 }

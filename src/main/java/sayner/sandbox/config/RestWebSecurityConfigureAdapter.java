@@ -4,11 +4,11 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import sayner.sandbox.authorization.handlers.CustomAccessDeniedHandler;
+import sayner.sandbox.authentication.handlers.CustomAccessDeniedHandler;
 import sayner.sandbox.models.User;
 import sayner.sandbox.repositories.UserDetailsRepo;
 
@@ -17,19 +17,21 @@ import java.time.LocalDateTime;
 @Configuration
 @EnableWebSecurity
 @EnableOAuth2Sso
+@EnableGlobalMethodSecurity(securedEnabled = true)
+
 public class RestWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
+//    @Override
+//    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication()
 //                .withUser("awesomeUser").password(new BCryptPasswordEncoder().encode("1234")).roles("a_mere_mortals")
 //                .and()
 //                .withUser("niceUser").password(new BCryptPasswordEncoder().encode("123")).roles("a_mere_mortals")
 //                .and()
 //                .withUser("admin").password(new BCryptPasswordEncoder().encode("12345")).roles("GODLiKE")
 //                .withUser("Alexander Sayner").roles("GODLiKE")
-        ;
-    }
+//        ;
+//    }
 //
 //    // HTTP Basic authorization :
 //    @Override
@@ -56,6 +58,7 @@ public class RestWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapte
 
         http
                 .csrf().disable()
+                .anonymous().disable()
                 .authorizeRequests()
                 .antMatchers("/articles*/**").hasRole("GODLiKE")
                 .antMatchers("/hello").permitAll()

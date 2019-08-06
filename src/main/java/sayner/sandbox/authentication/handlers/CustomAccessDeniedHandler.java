@@ -1,4 +1,4 @@
-package sayner.sandbox.authorization.handlers;
+package sayner.sandbox.authentication.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
