@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ArticleRepoHibernate extends RootRepoHibernate {
 
+    void save(Article article);
+
     Article findById(int id) throws NotFoundByIdException;
 
     List<Article> findAllLikeNameOrderByTitleUsingCriteriaQuery(String name) throws ThereIsNoSuchArticleException;

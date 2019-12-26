@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sayner.sandbox.annotations.Annotation1;
 import sayner.sandbox.annotations.SenselessTransaction;
 import sayner.sandbox.exceptions.NotFoundByIdException;
@@ -43,6 +42,17 @@ public class ArticleServiceImpl implements ArticleService {
     //
     // logic methods
     //
+
+    @Override
+    public Article cloneArticle(Integer id) {
+
+        Article article = articleRepository.findById(id).orElseThrow(() -> new NotFoundByIdException(String.format("%o нету :(", id)));
+        articleRepository.detachTypifiedEntity(article);
+        article.setId(null);
+        return articleRepository.save(article);
+//        articleRepository.flush();
+//        return article;
+    }
 
     @Override
     @SenselessTransaction
@@ -131,11 +141,11 @@ public class ArticleServiceImpl implements ArticleService {
             rollbackFor = Exception.class,
             isolation = Isolation.READ_UNCOMMITTED,
             propagation = Propagation.REQUIRES_NEW)
-    public void addArticle(Article article) {
+    public Article addArticle(Article article) {
 
-        articleRepository.save(article);
-
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); // trigger rollback programmatically
+//        articleRepoHibernate.save(article);
+        return articleRepository.save(article);
+//        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); // trigger rollback programmatically
     }
 
     /**

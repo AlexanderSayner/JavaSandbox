@@ -16,7 +16,7 @@ import java.util.List;
  * Repository is the base repository that doesn't have any methods
  */
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Integer>,
+public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaRepositoryCustom<Article>,
         JpaSpecificationExecutor<Article> {
 
     List<Article> findByTitleStartsWith(String titleStartsWith);

@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface ArticleService {
 
-    void addArticle(Article article);
+    Article cloneArticle(Integer id);
+
+    Article addArticle(Article article);
 
     void updateArticle(Article article) throws ThereIsNoSuchArticleException;
 

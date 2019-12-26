@@ -37,6 +37,18 @@ public class ArticleRepoHibernateImpl implements ArticleRepoHibernate {
         this.sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
     }
 
+    @Override
+    public void save(Article article) {
+
+        Session session = this.sessionFactory.openSession();
+        session.getTransaction().begin();
+
+        session.persist(article);
+        session.flush();
+
+        session.getTransaction().commit();
+        session.close();
+    }
 
     @Override
     public List<Article> filterFlexibility(String filtered_by, String value) {

@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
@@ -43,6 +41,24 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
+
+    @GetMapping(value = "/add/one")
+    public SingleResponseObjectDtpExt<String> addDataInDatabase() {
+
+        Thread thread = new Thread(() -> {
+            for (int counter = 0; counter < 1; counter++)
+                articleService.addArticle(new Article("aw_title" + "_" + counter % 7, "aw_manufacturer" + "_" + counter % 2, "Кефир" + "_" + counter, 45, "nope", null, LocalDateTime.now()));
+        });
+        thread.run();
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Поехали заполнять", true, null);
+    }
+
+    @GetMapping(value = "/clone")
+    public SingleResponseObjectDtpExt<Article> cloneArticle() {
+
+        Integer id = 1;
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "окей", true, articleService.cloneArticle(id));
+    }
 
     @GetMapping(value = "/cache")
     public SingleResponseObjectDtpExt<Object> getMyCacheTesting() throws IOException {
@@ -170,7 +186,7 @@ public class ArticleController {
     @GetMapping(value = "/criteria", params = {"by", "value"})
     @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public SingleResponseObjectDto getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
-                                                         @RequestParam("value") String value) {
+                                                          @RequestParam("value") String value) {
 
         SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
                 StatusEnum.AllDoneWell,
