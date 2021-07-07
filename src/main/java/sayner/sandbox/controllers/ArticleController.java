@@ -1,8 +1,8 @@
 package sayner.sandbox.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -10,32 +10,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import sayner.sandbox.dto.ArticleDTO;
+import sayner.sandbox.dto.SingleResponseObjectDto;
+import sayner.sandbox.dto.StatusEnum;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
+import sayner.sandbox.exceptions.NotFoundByIdException;
 import sayner.sandbox.exceptions.ThereIsNoSuchArticleException;
 import sayner.sandbox.jsontemplate.ModelResponse;
 import sayner.sandbox.jsontemplate.ResponseHandler;
-import sayner.sandbox.jsontemplate.jview.ArticleView;
+import sayner.sandbox.jsontemplate.jview.ArticleViewDto;
+import sayner.sandbox.jsontemplate.jview.SingleResponseObjectDtoView;
 import sayner.sandbox.mappers.ArticleMapper;
 import sayner.sandbox.models.Article;
-import sayner.sandbox.services.impl.ArticleServiceImpl;
+import sayner.sandbox.models.Warehouse;
+import sayner.sandbox.services.ArticleService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Управление каталогом
  */
 @RestController
 @RequestMapping("/articles")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class ArticleController {
 
+    private final ArticleService articleService;
 
-    @Autowired
-    private ArticleServiceImpl articleService;
-    @Autowired
-    private ModelResponse modelResponse;
+    private final ModelResponse modelResponse;
 
+
+    @GetMapping(value = "/cache")
+    public SingleResponseObjectDtpExt<Object> getMyCacheTesting() throws IOException {
+
+        this.articleService.cacheChecking();
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Cache test has started", true, null);
+    }
 
     /**
      * Отображает каталог товаров
@@ -43,32 +59,39 @@ public class ArticleController {
      * @return
      */
     @GetMapping
-    //@JsonView(ArticleView.IdTitleDate.class)
-    public ResponseEntity<Object> getAllArticlesTest() throws IOException {
-
-        Logger logger = LoggerFactory.getLogger(this.getClass());
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
+    public SingleResponseObjectDtpExt<Object> getAllArticlesTest() throws IOException {
 
 
-        logger.debug("This is an {} message.", "info");
-        logger.info("This is an info message");
-        logger.error("This is an error message");
+        Warehouse warehouse = new Warehouse();
+        Set<Warehouse> warehouses = new HashSet<>();
+        warehouses.add(warehouse);
+
+        log.debug("This is an {} message.", "info");
+        log.info("This is an info message");
+        log.error("This is an error message");
 
         articleService.method1();
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        Article article = new Article(1, "df", "ag", "dsf", 13, "hai");
+        Article article = new Article("df", "ag", "dsf", 13, "hai", warehouses);
         ArticleDTO articleDTO = articleMapper.toArticleDTO(article);
         Article transformed_article = articleMapper.toArticle(articleDTO);
 
-        logger.info(article.toString());
+        log.info(article.toString());
         System.out.println(article.toString());
-        logger.info(articleDTO.toString());
+        log.info(articleDTO.toString());
         System.out.println(articleDTO.toString());
-        logger.info(transformed_article.toString());
+        log.info(transformed_article.toString());
         System.out.println(transformed_article.toString());
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
+        List<Article> articleList = new ArrayList<>();
+        articleList.add(article);
+
+        return new SingleResponseObjectDtpExt(StatusEnum.AllDoneWell, "Any information", true, articleMapper.toArticleDTOs(articleService.getAllArticles()));
+//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleService.getAllArticles()), null);
+//        return modelResponse.responseEntity(HttpStatus.OK, "like message", articleMapper.toArticleDTOs(articleList), null);
     }
 
     /**
@@ -79,29 +102,34 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/{id}")
-//    @JsonView(ArticleView.IdTitleDate.class)
-    public ResponseEntity<Object> getArticle(@PathVariable int id) {
-        ResponseHandler responseHandler = new ResponseHandler();
+    @JsonView(SingleResponseObjectDtoView.StatusCodeMessageSuccessDataOrExceptionOperationDateAndTime.class)
+    public SingleResponseObjectDto getArticle(@PathVariable int id) throws NotFoundByIdException {
 
         ArticleMapper articleMapper = ArticleMapper.INSTANCE;
 
-        Article articleOne = articleService.getAnArticle(id);
-        Article articleTwo = articleService.getAnArticle(id);
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtoExtd<>(
+                StatusEnum.AllDoneWell,
+                "Вот вам Article",
+                true,
+                articleMapper.toArticleDTO(articleService.getAnArticle(id))
+        );
 
-        System.out.println("The first one" + articleOne.toString());
-        System.out.println("The second one" + articleTwo.toString());
+//        Article articleOne = articleService.getAnArticle(id);
+//        Article articleTwo = articleService.getAnArticle(id);
+//
+//        System.out.println("The first one" + articleOne.toString());
+//        System.out.println("The second one" + articleTwo.toString());
+//
+//        System.out.println(articleOne.getCreationDateTime());
+//        System.out.println(articleTwo.getCreationDateTime());
+//
+//        System.out.println("СРАВНЕНИЕ equals");
+//        System.out.println(articleTwo.equals(articleOne));
+//
+//        System.out.println("СРАВНЕНИЕ hashCode");
+//        System.out.println(articleTwo.hashCode() == articleOne.hashCode());
 
-        System.out.println(articleOne.getCreationDateTime());
-        System.out.println(articleTwo.getCreationDateTime());
-
-        System.out.println("СРАВНЕНИЕ equals");
-        System.out.println(articleTwo.equals(articleOne));
-
-        System.out.println("СРАВНЕНИЕ hashCode");
-        System.out.println(articleTwo.hashCode() == articleOne.hashCode());
-
-        return responseHandler.generateResponse(HttpStatus.OK, true, "Success",
-                articleMapper.toArticleDTO(articleService.getAnArticle(id)));
+        return singleResponseObjectDto;
 
     }
 
@@ -112,7 +140,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/session", params = {"name"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByCriteriaSession(@RequestParam("name") String name) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -122,7 +150,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/session", params = {"manufacturer"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getSomeArticlesByntityFactoryManagerCriteriaSession(@RequestParam("manufacturer") String manufacturer) {
 
         ResponseHandler responseHandler = new ResponseHandler();
@@ -138,7 +166,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/criteria", params = {"by", "value"})
-    @JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> getFromCriteriaBuilder(@RequestParam("by") String filtered_by,
                                                          @RequestParam("value") String value) {
 
@@ -213,7 +241,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(params = {"name"})
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public ResponseEntity<Object> filterByName(
             @RequestParam("name") String name
     ) {
@@ -252,7 +280,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping(value = "filter")
-    @JsonView(ArticleView.IdTitleDate.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public Page<Article> filterByExample(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -265,14 +293,14 @@ public class ArticleController {
     }
 
     @GetMapping(value = "filter", params = "name")
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findBName(@RequestParam("name") String name) {
 
         return articleService.findByName(name);
     }
 
     @GetMapping(value = "filter", params = "manufacturer")
-    @JsonView(ArticleView.IdTitleManufacturerName.class)
+    @JsonView(ArticleViewDto.IdStateTitleManufacturerNameCreationDate.class)
     public List<Article> findByManufacturer(@RequestParam("manufacturer") String manufacturer) {
 
         System.out.println(manufacturer);

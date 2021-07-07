@@ -11,13 +11,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import sayner.sandbox.models.Article;
 import sayner.sandbox.repositories.ArticleRepoHibernate;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application.properties")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:application.properties")
 @SpringBootTest
 public class RepositoryArticleTest {
 
-    @Autowired
-    private ArticleRepoHibernate articleRepoHibernate;
+//    @Autowired
+//    private ArticleRepoHibernate articleRepoHibernate;
 
     public RepositoryArticleTest() {
     }
@@ -29,11 +29,11 @@ public class RepositoryArticleTest {
         logger.info("TEST LOGGER RECORD");
     }
 
-    @Test
-    public void RepoTest() {
-
-        Article article = this.articleRepoHibernate.findById(1);
-        System.out.println(article.getId());
-    }
+//    @Test
+//    public void RepoTest() {
+//
+//        Article article = this.articleRepoHibernate.findById(1);
+//        System.out.println(article.getId());
+//    }
 
 }

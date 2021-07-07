@@ -1,6 +1,14 @@
 package sayner.sandbox.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Класс представляет собой филиал магазина
@@ -11,6 +19,11 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Branch_shops")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Log4j2
 public class BranchShop {
 
     /**
@@ -18,7 +31,8 @@ public class BranchShop {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "branch_shop_id")
+    private Integer id;
 
     /**
      * Регион или область страны
@@ -44,99 +58,20 @@ public class BranchShop {
     @Column
     private String name;
 
+    // mappedBy = "НАЗВАНИЕ_ПОЛЯ_В_ДРУГОЙ_СУЩНОСТИ_С_КОТОРЫМ_БУДЕТ_СВЯЗАНО_ДАННОЕ_ПОЛЕ"
+    @OneToMany(mappedBy = "branchShop", fetch = FetchType.LAZY)
+    private Set<TradeDepartment> tradeDepartments;
 
-    /**
-     * getter'ы & setter'ы
-     */
-    // Сначала getter'ы
-    public int getId() {
-        return id;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    // Теперь setter'ы
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    /**
-     * Default конструктор
-     */
-    public BranchShop() {
-    }
-
-    /**
-     * Конструктор устанавливает значения улицы и названия магазина
-     * Город остаётся по-умолчанию
-     *
-     * @param street
-     * @param name
-     */
-    public BranchShop(String street, String name) {
-        this.region = "Ульяновская обл";
-        this.city = "Ульяновск";
-        this.street = street;
-        this.name = name;
-    }
-
-    /**
-     * Конструкор устанавливает разом все параметры, кроме id
-     * т.к. он инкреминтируется автоматически на уровне СУБД
-     *
-     * @param region
-     * @param city
-     * @param street
-     * @param name
-     */
     public BranchShop(String region, String city, String street, String name) {
-        this.region = region;
-        this.city = city;
-        this.street = street;
-        this.name = name;
+
+        this.setRegion(region);
+        this.setCity(city);
+        this.setStreet(street);
+        this.setName(name);
     }
 
-    /**
-     * Устанавливает вообще всё. Очень нужен был
-     * @param id
-     * @param region
-     * @param city
-     * @param street
-     * @param name
-     */
-    public BranchShop(int id, String region, String city, String street, String name) {
-        this.id = id;
-        this.region = region;
-        this.city = city;
-        this.street = street;
-        this.name = name;
+    @JsonIgnore // to avoid an error: Could not write JSON: failed to lazily initialize a collection of role
+    public Set<TradeDepartment> getTradeDepartments() {
+        return this.tradeDepartments;
     }
 }
