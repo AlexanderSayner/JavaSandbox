@@ -5,16 +5,16 @@ package sayner.sandbox.jsontemplate.jview;
  */
 public final class AwesomeExceptionView {
 
-    /**
-     * Только сообщение
-     */
     public interface Message {
     }
 
-    /**
-     *
-     */
     public interface FullMessage extends Message {
+    }
+
+    public interface ShowException {
+    }
+
+    public interface FullAwesomeException extends FullMessage, ShowException {
     }
 
 }

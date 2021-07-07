@@ -1,29 +1,28 @@
 package sayner.sandbox.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sayner.sandbox.dto.ArticleDTO;
-import sayner.sandbox.jsontemplate.ModelResponse;
-import sayner.sandbox.services.impl.ArticleServiceImpl;
+import sayner.sandbox.dto.SingleResponseObjectDto;
+import sayner.sandbox.dto.StatusEnum;
+import sayner.sandbox.dto.extd.SingleResponseObjectDtpExt;
+import sayner.sandbox.services.ArticleService;
+import sayner.sandbox.services.BranchShopService;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
+@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @RestController
 @RequestMapping("/")
+@Log4j2
 public class HelloController {
 
-    @Autowired
-    private ModelResponse modelResponse;
-    @Autowired
-    private ArticleServiceImpl articleService;
+    private final ArticleService articleService;
+
+    private final BranchShopService branchShopService;
 
     @RequestMapping("/hello")
     public String sayHi() {
@@ -31,14 +30,18 @@ public class HelloController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> fillTheDatabase() throws IOException {
+    public SingleResponseObjectDto fillTheDatabase() throws IOException {
 
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.info("=== Starting to fill the database ===");
+        log.info("=== Starting to fill the database ===");
 
-        articleService.fillTheDatabase();
+        Thread shopsThread = new Thread(() -> branchShopService.fillTheDatabase());
+        Thread articleThread = new Thread(() -> articleService.fillTheDatabase());
 
-        logger.info("=== Entities have added to the database ===");
+        // Создаём побочные потоки и наслаждаемся быстрым откликом приложения
+        shopsThread.start();
+        articleThread.start();
+
+        log.info("=== Process adding entities to the database has started===");
 
         class DtoClassWithData {
             private String status;
@@ -55,7 +58,14 @@ public class HelloController {
             }
         }
 
-        return modelResponse.responseEntity(HttpStatus.OK, "like message", new DtoClassWithData("operation complete"), null);
+        SingleResponseObjectDto singleResponseObjectDto = new SingleResponseObjectDtpExt<>(
+                StatusEnum.AllDoneWell,
+                "Вот вам Article",
+                true,
+                new DtoClassWithData("operation complete")
+        );
+
+        return singleResponseObjectDto;
     }
 
 }
